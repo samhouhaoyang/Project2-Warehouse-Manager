@@ -1,0 +1,15 @@
+package IO;
+
+import employees.Payslip;
+import warehouse.WarehouseMap;
+
+public class FileManager {
+
+/*
+    public WarehouseMap loadWarehouseData(String){}
+    public EmployeeRegistry loadEmployeeData(String){}
+    public Payslip[] loadPayslipData(){}
+    public boolean savePayslipData(Payslip[]){}
+
+ */
+}

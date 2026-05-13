@@ -1,4 +1,4 @@
-package IO;
+package io;
 
 import employees.*;
 import enums.DesignationType;
@@ -8,15 +8,15 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class EmployeeDataReader {
+public class EmployeeFileReader {
     private final ArrayList<String> managerIds;
 
-    public EmployeeDataReader(){
+    public EmployeeFileReader(){
         this.managerIds = new ArrayList<>();
     }
     public ArrayList<Employee> readEmployees(String path) throws FileNotFoundException {
         managerIds.clear();
-        
+
         ArrayList<Employee> employees = new ArrayList<>();
 
         Scanner scanner = new Scanner(new File(path));
@@ -68,9 +68,9 @@ public class EmployeeDataReader {
         }
     }
     public Employee processLine(String line, int lineNumber){
-        String[] lineArray = line.split(",", -1);
+        String[] lineArray = line.split(FileConstants.CSV_DELIMITER, -1);
         // incorrect number of columns
-        if (lineArray.length < IOConstants.MIN_COL_EMPLOYEE) {
+        if (lineArray.length < FileConstants.EMPLOYEE_MIN_FIELD_COUNT) {
             System.out.printf(
                     "Incorrect Employees line at line %d. Skipping this line.%n",
                     lineNumber
@@ -85,7 +85,7 @@ public class EmployeeDataReader {
         String managerId = "";
 
         // handles manager if linked to one
-        if(lineArray.length >= IOConstants.MAX_COL_EMPLOYEE){
+        if(lineArray.length >= FileConstants.EMPLOYEE_MAX_FIELD_COUNT){
             managerId = lineArray[4].trim();
         }
 

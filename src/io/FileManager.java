@@ -1,7 +1,4 @@
-package IO;
-
-import employees.Payslip;
-
+package io;
 
 public class FileManager {
 

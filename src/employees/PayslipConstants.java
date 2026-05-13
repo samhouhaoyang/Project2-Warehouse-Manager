@@ -6,4 +6,5 @@ public class PayslipConstants {
     public static final double RESTRICTED_AREA_PENALTY = 0.50;
     public static final double REPORTEE_MANAGEMENT_PAY = 5.00;
 
+    public static final double MIN_VALID_PAY_OR_PENALTY = 0.00;
 }

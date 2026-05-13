@@ -8,10 +8,10 @@ public class Payslip{
     private final double hitPenalty;
     private final double restrictedPenalty;
     private final double reporteePay;
-    private final double reporteeMangementPay;
     private final double netSalary;
 
-    public Payslip(String employeeId, String employeeName, double baseSalary, double deliveredPay, double hitPenalty, double restrictedPenalty, double reporteePay, double reporteeMangementPay, double netSalary) {
+    public Payslip(String employeeId, String employeeName, double baseSalary, double deliveredPay, double hitPenalty,
+                   double restrictedPenalty, double reporteePay, double netSalary) {
         this.employeeId = employeeId;
         this.employeeName = employeeName;
         this.baseSalary = baseSalary;
@@ -19,11 +19,39 @@ public class Payslip{
         this.hitPenalty = hitPenalty;
         this.restrictedPenalty = restrictedPenalty;
         this.reporteePay = reporteePay;
-        this.reporteeMangementPay = reporteeMangementPay;
         this.netSalary = netSalary;
     }
 
-    public Payslip(String employeeId, String employeeName, double baseSalary, double deliveredPay, double wallPenalty, double restrictedPenalty, double reporteePay, double netSalary) {
+    public String getEmployeeId() {
+        return employeeId;
+    }
+
+    public String getEmployeeName() {
+        return employeeName;
+    }
+
+    public double getBaseSalary() {
+        return baseSalary;
+    }
+
+    public double getDeliveredPay() {
+        return deliveredPay;
+    }
+
+    public double getHitPenalty() {
+        return hitPenalty;
+    }
+
+    public double getRestrictedPenalty() {
+        return restrictedPenalty;
+    }
+
+    public double getReporteePay() {
+        return reporteePay;
+    }
+
+    public double getNetSalary() {
+        return netSalary;
     }
 
     public void printPayslip(){
@@ -35,5 +63,17 @@ public class Payslip{
         System.out.printf("Restricted Penalty: %.2f%n", restrictedPenalty);
         System.out.printf("Reportee Pay: %.2f%n", reporteePay);
         System.out.printf("Net Salary: %.2f%n", netSalary);
+    }
+
+    public String toFileLine(){
+        return String.format("%s,%s,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
+                employeeId,
+                employeeName,
+                baseSalary,
+                deliveredPay,
+                hitPenalty,
+                restrictedPenalty,
+                reporteePay,
+                netSalary);
     }
 }

@@ -13,7 +13,7 @@ import java.util.Scanner;
 
 public class PayslipFileReader {
 
-    public ArrayList<Payslip> readPayslips(String path) throws FileNotFoundException {
+    public ArrayList<Payslip> readPayslips(String path) {
         ArrayList<Payslip> payslips = new ArrayList<>();
         File file = new File(path);
 

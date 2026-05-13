@@ -1,4 +1,20 @@
 ### IntelliJ IDEA ###
+# Java compiled files
+*.class
+
+# Test/build output folders
+src/out
+out-test/
+bin/
+target/
+
+# IDE files
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/

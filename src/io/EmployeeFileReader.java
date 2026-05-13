@@ -36,10 +36,12 @@ public class EmployeeFileReader {
                 employees.add(employee);
             }
 
-            scanner.close();
 
-            linkSupervisor(employees);
         }
+
+        scanner.close();
+        linkSupervisor(employees);
+
         return employees;
     }
     private Employee findEmployeeById(ArrayList<Employee> employees, String id){

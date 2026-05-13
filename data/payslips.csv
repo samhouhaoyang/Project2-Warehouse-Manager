@@ -1,0 +1,6 @@
+employee_id,employee_name,base_pay,delivered_item_pay,hits_penalty,restricted_area_penalty,reportees_managing_pay,net_salary
+E001,James Carter,1400.00,0.00,0.00,0.00,10.00,1410.00
+E002,Priya Nair,1050.00,0.00,0.00,0.00,0.00,1050.00
+E003,Michael Lee,1500.00,0.00,0.00,0.00,0.00,1500.00
+E004,Matthew Taylor,3000.00,0.00,0.00,0.00,5.00,3005.00
+E005,Noah Patel,3000.00,0.00,0.00,0.00,0.00,3000.00

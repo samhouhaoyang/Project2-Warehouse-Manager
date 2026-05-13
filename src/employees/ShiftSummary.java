@@ -1,15 +1,19 @@
 package employees;
 
 public class ShiftSummary {
-    private int itemDelivered;
+    private int itemsDelivered;
     private int wallHits;
     private int restrictedAreaHits;
 
     public ShiftSummary() {
+        this.itemsDelivered = 0;
+        this.wallHits = 0;
+        this.restrictedAreaHits = 0;
+
     }
 
-    public int getItemDelivered() {
-        return itemDelivered;
+    public int getItemsDelivered() {
+        return itemsDelivered;
     }
 
     public int getWallHits() {
@@ -21,7 +25,7 @@ public class ShiftSummary {
     }
 
     public void updateItemDelivered(){
-        this.itemDelivered += 1;
+        this.itemsDelivered += 1;
     }
 
     public void updateWallHits(){
@@ -33,8 +37,8 @@ public class ShiftSummary {
     }
 
     public void printSummary(){
-        System.out.printf("No. of Items delivered: %d\n" +
-                "No. of Walls hit: %d\n" +
-                "No. of Restricted Areas hit: %d\n", itemDelivered, wallHits, restrictedAreaHits);
+        System.out.printf("No. of Items delivered: %d%n" +
+                "No. of Walls hit: %d%n" +
+                "No. of Restricted Areas hit: %d%n", itemsDelivered, wallHits, restrictedAreaHits);
     }
 }

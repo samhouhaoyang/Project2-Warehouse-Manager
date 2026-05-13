@@ -1,27 +1,33 @@
 package employees;
 
 import enums.DesignationType;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Supervisor extends Employee implements WarehouseWorker{
-    private ArrayList<Employee> reportees;
+    private final ArrayList<Employee> reportees;
 
-    public Supervisor(int employeeId, String employeeName, DesignationType designation, double baseSalary) {
+    public Supervisor(String employeeId, String employeeName, DesignationType designation, double baseSalary) {
         super(employeeId, employeeName, designation, baseSalary);
+        this.reportees = new ArrayList<>();
     }
 
-    public void addReportees(Employee employee){
+    public void addReportee(Employee employee){
         reportees.add(employee);
     }
 
-    // is this data leakage? using ArrayList()?
-    public Employee getReportees(){
-        return reportees.getFirst();
+    public ArrayList<Employee> getReportees() {
+        return new ArrayList<>(reportees);
     }
-    
+
     public int getReporteeCount(){
         return reportees.size();
     }
+
+
+    @Override
+    public double getReporteeManagementPay(){
+        return getReporteeCount() * PayslipConstants.REPORTEE_MANAGEMENT_PAY;
+    }
+
+
 }

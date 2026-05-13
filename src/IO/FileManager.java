@@ -1,7 +1,7 @@
 package IO;
 
 import employees.Payslip;
-import warehouse.WarehouseMap;
+
 
 public class FileManager {
 

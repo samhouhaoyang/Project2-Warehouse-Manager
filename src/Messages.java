@@ -1,3 +1,5 @@
+import employees.PayrollManager;
+
 /**
  * Class for user-facing messages.
  */
@@ -6,9 +8,10 @@ public final class Messages {
     private Messages() { }
 
     public static final String HYPHEN = "-";
+    public static final String MENU_DASH = "—";
 
     public static final String INVALID_ARGS_USAGE =
-            "Invalid number of Command Line Arguments. Usage: java WarehouseManagerEngine <rows> <cols> <seed>";
+            "Invalid number of Command Line Arguments. Usage: java WarehouseManagerEngine <floors> <rows> <cols> <master file> <employees file>";
 
     public static final String INVALID_ARGS_DIMENSIONS =
             "Error: Rows and columns must be at least 4 to allow proper map layout.";
@@ -98,5 +101,30 @@ public final class Messages {
 
     public static void printWelcomeA2() {
         System.out.println("Welcome to Warehouse Manager Assignment 2.");
+    }
+
+    public static void printPayrollManagerMenu(PayrollManager manager) {
+        System.out.printf(
+                "=== Payroll Manager Menu " + MENU_DASH + " %s [%s] ===%n",
+                manager.getEmployeeName(),
+                manager.getDesignation()
+        );
+        System.out.println("1. View all employees' shift summary");
+        System.out.println("2. Generate payslips");
+        System.out.println("3. View all generated payslips");
+        System.out.println("4. Logout");
+        System.out.print("> ");
+    }
+    public static void printBreakLine(){
+        System.out.println("=======================");
+    }
+
+    public static void printPaySlipNotGenerated(){
+        System.out.println("Payslip not generated yet.");
+
+    }
+
+    public static void printPaySlipGenerated(){
+        System.out.println("Payslips generated successfully.");
     }
 }

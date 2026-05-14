@@ -15,6 +15,7 @@ public class EmployeeFileReader {
         this.managerIds = new ArrayList<>();
     }
     public ArrayList<Employee> readEmployees(String path) throws FileNotFoundException {
+        // TODO: when accessed by a caller function need to use a try-catch for FileNotFoundException
         managerIds.clear();
 
         ArrayList<Employee> employees = new ArrayList<>();

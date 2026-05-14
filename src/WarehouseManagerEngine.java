@@ -1,14 +1,22 @@
 
 import java.util.Scanner;
 import employees.Employee;
+import employees.PayrollManager;
 import employees.Payslip;
+import employees.ShiftSummary;
+import enums.PayrollManagerMenuOption;
+
 import io.EmployeeFileReader;
 import io.PayslipFileReader;
 import io.PayslipFileWriter;
 import io.FileConstants;
 
+
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+
+import static enums.PayrollManagerMenuOption.fromInput;
+
 /**
 You can modify any code in this class including the existing method signatures present.
 */
@@ -35,12 +43,26 @@ public class WarehouseManagerEngine {
         //Step 1: Command line args
         //Validate all the cmd args except file names. if success then create the warehouse map using floor, row, cols
         // if validation fails, print message, return false and terminate.
+        if(args.length < 5){
+            System.out.println(Messages.INVALID_ARGS_USAGE);
+            return;
+        }
+        String floorText = args[0];
+        String rowsText = args[1];
+        String columnsText = args[2];
+        String warehouseMapFilePath = args[3];
+        String EmployeesFilePath = args[4];
+
 
         //Step 2: File Reading, fir file not found exception print message and terminate. for all other kind skip lines
         engine.testIoPackage(args);
+        engine.testManagerMenu();
         //Step 3: Main Menu Loop
         //Step 4: Write the payslips data before terminating the program.
         //engine.exitProgram();
+    }
+
+    private void testManagerMenu() {
     }
 
     private void testIoPackage(String[] args) {
@@ -60,16 +82,23 @@ public class WarehouseManagerEngine {
         System.out.println("Employees loaded: " + employees.size());
         System.out.println("Payslips loaded: " + loadedPayslips.size());
 
-        generateCurrentPayslips();
+        PayrollManager payrollManager = findFirstPayrollManager();
 
-        System.out.println();
-        System.out.println("Generated payslips:");
-        printPayslips(currentPayslips);
-
+        if (payrollManager != null) {
+            runPayrollManagerMenu(payrollManager);
+        }
         // Only uncomment this when you intentionally want to overwrite data/payslips.csv
         //savePayslipsIfNeeded();
     }
+    private PayrollManager findFirstPayrollManager() {
+        for (Employee employee : employees) {
+            if (employee instanceof PayrollManager) {
+                return (PayrollManager) employee;
+            }
+        }
 
+        return null;
+    }
     private void readEmployees(String path) {
         EmployeeFileReader reader = new EmployeeFileReader();
 
@@ -85,32 +114,9 @@ public class WarehouseManagerEngine {
         loadedPayslips = reader.readPayslips(FileConstants.PAYSLIPS_FILE_PATH);
     }
 
-    private void generateCurrentPayslips() {
-        currentPayslips.clear();
 
-        for (Employee employee : employees) {
-            currentPayslips.add(employee.generatePayslip());
-        }
 
-        hasGeneratedCurrentPayslips = true;
-        payslipsModified = true;
-    }
 
-    private void printPayslips(ArrayList<Payslip> payslips) {
-        if (payslips.isEmpty()) {
-            System.out.println("Payslip not generated yet.");
-            return;
-        }
-
-        for (int i = 0; i < payslips.size(); i++) {
-            payslips.get(i).printPayslip();
-
-            if (i < payslips.size() - 1) {
-                System.out.println("=======================");
-                System.out.println();
-            }
-        }
-    }
 
     private void savePayslipsIfNeeded() {
         if (!payslipsModified) {
@@ -152,5 +158,83 @@ public class WarehouseManagerEngine {
 
     
     //TODO: Create other methods
+
+    // payroll manager menu
+    private void runPayrollManagerMenu(PayrollManager manager)  {
+        boolean isRunning= true;
+
+        /*
+        menu options
+        1. view all employees' shift summaries
+        2. generate payslips
+        3. view payslips
+        4. logout: return to employee login
+         */
+        while(isRunning) {
+            Messages.printPayrollManagerMenu(manager);
+            String optionText = SCANNER.nextLine().trim();
+            PayrollManagerMenuOption option = fromInput(optionText);
+
+            switch (option) {
+                case VIEW_ALL_EMPLOYEE_SHIFT -> viewAllEmployeeShiftSummary();
+                case GENERATE_PAYSLIPS -> generateCurrentPayslips();
+                case VIEW_ALL_PAYSLIPS ->  viewAllPayslips();
+                case LOGOUT -> isRunning = false;
+                case INVALID -> System.out.println("Invalid input.");
+            }
+
+        }
+    }
+
+    private void viewAllEmployeeShiftSummary() {
+        for (Employee employee : employees) {
+            System.out.printf(
+                    "Employee Id: %s, Employee Name: %s, Designation: %s%n",
+                    employee.getEmployeeId(),
+                    employee.getEmployeeName(),
+                    employee.getDesignation()
+            );
+
+            employee.getShiftSummary().printSummary();
+            System.out.println();
+        }
+
+    }
+
+    private void generateCurrentPayslips() {
+        currentPayslips.clear();
+
+        for (Employee employee : employees) {
+            currentPayslips.add(employee.generatePayslip());
+        }
+
+        hasGeneratedCurrentPayslips = true;
+        payslipsModified = true;
+
+        Messages.printPaySlipGenerated();
+    }
+
+    private void viewAllPayslips(){
+        if (hasGeneratedCurrentPayslips) {
+            printPayslips(currentPayslips);
+        }else if (!loadedPayslips.isEmpty()) {
+            printPayslips(loadedPayslips);
+        }else{
+            Messages.printPaySlipNotGenerated();
+        }
+
+
+    }
+    private void printPayslips(ArrayList<Payslip> payslips) {
+        for (int i = 0; i < payslips.size(); i++) {
+            payslips.get(i).printPayslip();
+
+            if (i < payslips.size() - 1) {
+                Messages.printBreakLine();
+                System.out.println();
+            }
+        }
+    }
+
 }
 

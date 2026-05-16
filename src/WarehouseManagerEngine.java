@@ -1,4 +1,5 @@
 
+import java.io.File;
 import java.util.Scanner;
 
 import employees.*;
@@ -25,8 +26,15 @@ public class WarehouseManagerEngine {
     private ArrayList<Payslip> loadedPayslips;
     private ArrayList<Payslip> currentPayslips;
     private final String TERMINATE = "X";
+    private final int VALID_ARGS_NUM = 5;
     private boolean hasGeneratedCurrentPayslips;
     private boolean payslipsModified;
+
+    private int floors;
+    private int rows;
+    private int columns;
+    private String warehouseMapFilePath;
+    private String employeesFilePath;
 
     public WarehouseManagerEngine() {
         employees = new ArrayList<>();
@@ -41,15 +49,13 @@ public class WarehouseManagerEngine {
     public static void main(String[] args) {
         WarehouseManagerEngine engine = new WarehouseManagerEngine();
 
-        if (args.length < 5) {
-            System.out.println(Messages.INVALID_ARGS_USAGE);
+        if (!engine.validateArgs(args)) {
             return;
         }
 
-        engine.loadFiles(args);
+        engine.loadFiles();
         engine.runMainMenuLoop();
         engine.exitProgram();
-
     }
 
     private void testManagerMenu() {
@@ -133,16 +139,50 @@ public class WarehouseManagerEngine {
 
     private boolean validateArgs(String[] args) {
         //TODO: validate the args
+        if (args.length < VALID_ARGS_NUM) {
+            System.out.println(Messages.INVALID_ARGS_USAGE);
+            return false;
+        }
+
+        try {
+            floors = Integer.parseInt(args[0]);
+            rows = Integer.parseInt(args[1]);
+            columns = Integer.parseInt(args[2]);
+        } catch (NumberFormatException e) {
+            System.out.println(Messages.INVALID_ARGS_INTEGERS);
+            return false;
+        }
+
+        if (floors < 1 || floors > 3){
+            System.out.println(Messages.INVALID_FLOORS);
+            return false;
+        }
+
+        if (rows < 4 || columns < 4){
+            System.out.println(Messages.INVALID_ROWs_COLS);
+            return false;
+        }
+
+        warehouseMapFilePath = args[3];
+        employeesFilePath = args[4];
+
+        if(!new File(warehouseMapFilePath).exists() || !new File(employeesFilePath).exists()) {
+            System.out.println(Messages.FILE_PROCESSING_ERROR);
+            return false;
+        }
+
         return true;
     }
 
-    private void loadFiles(String[] args) {
-        //TODO: load map files
-        String employeesFilePath = args[4];
 
+
+    private void loadFiles() {
+        //initialiseWarehouseMap(floors, rows, columns);
+        //readWarehouseMap(warehouseMapFilePath);
         readEmployees(employeesFilePath);
         readPayslips();
     }
+
 
     private void runMainMenuLoop()  {
         Messages.printWelcomeA2();

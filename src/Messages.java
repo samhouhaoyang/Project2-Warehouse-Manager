@@ -59,6 +59,18 @@ public final class Messages {
     public static final String RESET_DONE =
             "Shift and warehouse reset.";
 
+    public static final String INVALID_ARGS_INTEGERS =
+            "Error: Floors, rows and columns must be integers.";
+
+    public static final String INVALID_FLOORS =
+            "Error: Number of floors has to be between 1 and 3.";
+
+    public static final String FILE_PROCESSING_ERROR =
+            "Unable to process file. Exiting program.";
+
+    public static final String INVALID_ROWs_COLS =
+            "Error: Rows and columns must be at least 4 to allow proper map layout.";
+
     public static void printWelcome() {
         System.out.println("Welcome to Warehouse Manager Console.");
     }

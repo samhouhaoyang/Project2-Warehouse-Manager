@@ -1,11 +1,11 @@
 
 import java.util.Scanner;
-import employees.Employee;
-import employees.PayrollManager;
-import employees.Payslip;
-import employees.ShiftSummary;
+
+import employees.*;
+import enums.OperatorMenuOption;
 import enums.PayrollManagerMenuOption;
 
+import enums.SupervisorMenuOption;
 import io.EmployeeFileReader;
 import io.PayslipFileReader;
 import io.PayslipFileWriter;
@@ -24,7 +24,7 @@ public class WarehouseManagerEngine {
     private ArrayList<Employee> employees;
     private ArrayList<Payslip> loadedPayslips;
     private ArrayList<Payslip> currentPayslips;
-
+    private final String TERMINATE = "X";
     private boolean hasGeneratedCurrentPayslips;
     private boolean payslipsModified;
 
@@ -40,26 +40,16 @@ public class WarehouseManagerEngine {
 
     public static void main(String[] args) {
         WarehouseManagerEngine engine = new WarehouseManagerEngine();
-        //Step 1: Command line args
-        //Validate all the cmd args except file names. if success then create the warehouse map using floor, row, cols
-        // if validation fails, print message, return false and terminate.
-        if(args.length < 5){
+
+        if (args.length < 5) {
             System.out.println(Messages.INVALID_ARGS_USAGE);
             return;
         }
-        String floorText = args[0];
-        String rowsText = args[1];
-        String columnsText = args[2];
-        String warehouseMapFilePath = args[3];
-        String EmployeesFilePath = args[4];
 
+        engine.loadFiles(args);
+        engine.runMainMenuLoop();
+        engine.exitProgram();
 
-        //Step 2: File Reading, fir file not found exception print message and terminate. for all other kind skip lines
-        engine.testIoPackage(args);
-        engine.testManagerMenu();
-        //Step 3: Main Menu Loop
-        //Step 4: Write the payslips data before terminating the program.
-        //engine.exitProgram();
     }
 
     private void testManagerMenu() {
@@ -136,7 +126,7 @@ public class WarehouseManagerEngine {
 
     private void exitProgram(){
         //TODO: Write the payslips data at the end.
-
+        savePayslipsIfNeeded();
         System.out.println("Goodbye!");
 
     }
@@ -147,18 +137,107 @@ public class WarehouseManagerEngine {
     }
 
     private void loadFiles(String[] args) {
-        //TODO: load files
+        //TODO: load map files
+        String employeesFilePath = args[4];
 
+        readEmployees(employeesFilePath);
+        readPayslips();
     }
 
     private void runMainMenuLoop()  {
         Messages.printWelcomeA2();
        //Run main menu loop based on employee selection
+
+        boolean isRunning = true;
+
+        while (isRunning) {
+            Messages.printEmployeeLogin();
+
+            String input = SCANNER.nextLine().trim();
+
+            if(input.equalsIgnoreCase(TERMINATE)){
+                isRunning = false;
+            }else{
+                Employee currEmployee = findEmployeeById(input);
+
+                if(findEmployeeById(input) == null){
+                    Messages.printEmployeeNotFound();
+
+                }else{
+                    Messages.printEmployeeWelcome(currEmployee);
+
+                    switch (currEmployee.getDesignation()){
+                        case OPERATOR, SENIOR_OPERATOR -> runOperatorMenu(currEmployee);
+                        case PAYROLL_MANAGER -> runPayrollManagerMenu((PayrollManager) currEmployee);
+                        case SUPERVISOR -> runSupervisorMenu((Supervisor)currEmployee);
+                        default -> System.out.println(Messages.INVALID_INPUT);
+                    }
+                }
+
+            }
+
+            if (isRunning) {
+                System.out.println();
+            }
+
+        }
     }
 
-    
-    //TODO: Create other methods
 
+    //TODO: Create other methods
+    private void runSupervisorMenu(Supervisor supervisor){
+        boolean isRunning = true;
+        while(isRunning) {
+            Messages.printSupervisorMenu(supervisor);
+
+            String input = SCANNER.nextLine().trim();
+            SupervisorMenuOption option = SupervisorMenuOption.fromInput(input);
+
+            switch(option) {
+                // TODO: connect with warehouseshifts from project 1
+                case START_SHIFT -> startWarehouseShift(supervisor); // temporary stub
+                case RESUME_SHIFT -> resumeWarehouseShift(supervisor); // temporary stub
+
+                case VIEW_SHIFT_SUMMARY -> supervisor.getShiftSummary().printSummary();
+                case VIEW_PAYSLIP -> viewOwnPayslip(supervisor);
+                case VIEW_REPORTEE_SHIFT_SUMMARY -> viewReporteesShift(supervisor);
+                case LOGOUT -> isRunning = false;
+                case INVALID -> System.out.println(Messages.INVALID_INPUT);
+
+            }
+
+            if (isRunning) {
+                System.out.println();
+            }
+        }
+    }
+    private void runOperatorMenu(Employee employee) {
+        boolean isRunning = true;
+
+        while(isRunning) {
+            Messages.printOperatorMenu(employee);
+
+            String input = SCANNER.nextLine().trim();
+            OperatorMenuOption option = OperatorMenuOption.fromInput(input);
+
+            switch(option) {
+                // TODO: connect with warehouseshifts from project 1
+                case START_SHIFT -> startWarehouseShift(employee); // temporary stub
+                case RESUME_SHIFT -> resumeWarehouseShift(employee); // temporary stub
+
+                case VIEW_SHIFT_SUMMARY -> employee.getShiftSummary().printSummary();
+                case VIEW_PAYSLIP -> viewOwnPayslip(employee);
+                case LOGOUT -> isRunning = false;
+                case INVALID -> System.out.println(Messages.INVALID_INPUT);
+
+            }
+
+            if (isRunning) {
+                System.out.println();
+            }
+        }
+
+    }
     // payroll manager menu
     private void runPayrollManagerMenu(PayrollManager manager)  {
         boolean isRunning= true;
@@ -180,12 +259,77 @@ public class WarehouseManagerEngine {
                 case GENERATE_PAYSLIPS -> generateCurrentPayslips();
                 case VIEW_ALL_PAYSLIPS ->  viewAllPayslips();
                 case LOGOUT -> isRunning = false;
-                case INVALID -> System.out.println("Invalid input.");
+                case INVALID -> System.out.println(Messages.INVALID_INPUT);
             }
 
+            if (isRunning) {
+                System.out.println();
+            }
         }
     }
 
+    private void startWarehouseShift(Employee employee) {
+        System.out.println("Start warehouse shift not implemented yet.");
+    }
+
+    private void resumeWarehouseShift(Employee employee) {
+        System.out.println("Resume warehouse shift not implemented yet.");
+    }
+    private void viewOwnPayslip(Employee employee) {
+        ArrayList<Payslip> payslipSource;
+
+        if (hasGeneratedCurrentPayslips) {
+            payslipSource = currentPayslips;
+        } else {
+            payslipSource = loadedPayslips;
+        }
+
+        if (payslipSource.isEmpty()) {
+            Messages.printPaySlipNotGenerated();
+            return;
+        }
+        Payslip payslip = findPayslipByEmployeeId(payslipSource, employee.getEmployeeId());
+
+        if (payslip == null) {
+            Messages.printPaySlipNotGenerated();
+            return;
+        }
+
+        employee.viewPayslip(payslip);
+    }
+
+    private Payslip findPayslipByEmployeeId(ArrayList<Payslip> payslips, String employeeId) {
+        for (Payslip payslip : payslips) {
+            if (payslip.getEmployeeId().equals(employeeId)) {
+                return payslip;
+            }
+        }
+
+        return null;
+    }
+
+    private void viewReporteesShift(Supervisor supervisor) {
+        ArrayList<Employee> reportees;
+        reportees = supervisor.getReportees();
+
+        if (reportees.isEmpty()) {
+            System.out.println("No reportees found.");
+            return;
+        }
+
+        for (Employee employee : reportees) {
+            System.out.printf(
+                    "Employee Id: %s, Employee Name: %s, Designation: %s%n",
+                    employee.getEmployeeId(),
+                    employee.getEmployeeName(),
+                    employee.getDesignation()
+            );
+
+            employee.getShiftSummary().printSummary();
+            System.out.println();
+        }
+
+    }
     private void viewAllEmployeeShiftSummary() {
         for (Employee employee : employees) {
             System.out.printf(
@@ -236,5 +380,14 @@ public class WarehouseManagerEngine {
         }
     }
 
+    private Employee findEmployeeById(String employeeId) {
+        for (Employee employee : employees) {
+            if (employee.getEmployeeId().equals(employeeId)) {
+                return employee;
+            }
+        }
+
+        return null;
+    }
 }
 

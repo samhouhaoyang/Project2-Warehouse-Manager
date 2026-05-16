@@ -1,4 +1,4 @@
-import employees.PayrollManager;
+import employees.Employee;
 
 /**
  * Class for user-facing messages.
@@ -55,8 +55,6 @@ public final class Messages {
     public static final String ITEM_PLACED =
             "Item placed successfully.";
 
-    public static final String NO_HISTORY =
-            "No operation history available.";
 
     public static final String RESET_DONE =
             "Shift and warehouse reset.";
@@ -65,45 +63,16 @@ public final class Messages {
         System.out.println("Welcome to Warehouse Manager Console.");
     }
 
-    public static void printMainMenuCommands() {
-        System.out.println("\n=== Warehouse Manager Menu ===");
-        System.out.println("1. Start warehouse shift.");
-        System.out.println("2. Resume last shift.");
-        System.out.println("3. View operation history.");
-        System.out.println("4. Reset shift and warehouse.");
-        System.out.println("5. Abandon the shift and exit.");
-        System.out.print("> ");
-    }
-
-    public static void printMovementOptions() {
-        System.out.println("Enter direction:");
-        System.out.println("U - Up.");
-        System.out.println("D - Down.");
-        System.out.println("L - Left.");
-        System.out.println("R - Right.");
-        System.out.println("T - Deliver carried item at START (O).");
-        System.out.println("Q - Quit to main menu.");
-        System.out.print("> ");
-    }
-
-
-    public static void printShelfMenu() {
-        System.out.println("Shelf Menu:");
-        System.out.println("Press V to view items.");
-        System.out.println("Press P to pick an item.");
-        System.out.println("Press Q to exit shelf menu.");
-        System.out.print("> ");
-    }
-
     public static void printLegend() {
         System.out.println("Legend: # Wall | . Aisle | X Restricted | S Shelf | O Start | F Forklift");
     }
 
     public static void printWelcomeA2() {
         System.out.println("Welcome to Warehouse Manager Assignment 2.");
+        System.out.println();
     }
 
-    public static void printPayrollManagerMenu(PayrollManager manager) {
+    public static void printPayrollManagerMenu(Employee manager) {
         System.out.printf(
                 "=== Payroll Manager Menu " + MENU_DASH + " %s [%s] ===%n",
                 manager.getEmployeeName(),
@@ -127,4 +96,45 @@ public final class Messages {
     public static void printPaySlipGenerated(){
         System.out.println("Payslips generated successfully.");
     }
+
+    public static void printEmployeeLogin() {
+        System.out.println("=== Employee Login ===");
+        System.out.print("Enter your Employee ID or X to terminate: ");
+    }
+
+    public static void printEmployeeWelcome(Employee employee) {
+        System.out.printf(
+                "Welcome, %s [%s]%n",
+                employee.getEmployeeName(),
+                employee.getDesignation()
+        );
+        System.out.println();
+    }
+
+    public static void printEmployeeNotFound() {
+        System.out.println("Employee ID not found. Please try again.");
+        System.out.println();
+    }
+
+    public static void printOperatorMenu(Employee employee) {
+        System.out.printf("=== Operator Menu — %s [%s] ===%n", employee.getEmployeeName(), employee.getDesignation());
+        System.out.println("1. Start warehouse shift");
+        System.out.println("2. Resume last shift.");
+        System.out.println("3. View my shift summary");
+        System.out.println("4. View my payslip");
+        System.out.println("5. Logout");
+        System.out.print("> ");
+    }
+
+    public static void printSupervisorMenu(Employee employee) {
+        System.out.printf("=== Supervisor Menu — %s [%s] ===%n", employee.getEmployeeName(), employee.getDesignation());
+        System.out.println("1. Start warehouse shift");
+        System.out.println("2. Resume last shift.");
+        System.out.println("3. View my shift summary");
+        System.out.println("4. View my payslip");
+        System.out.println("5. View reportees' shift summary");
+        System.out.println("6. Logout");
+        System.out.print("> ");
+    }
+
 }

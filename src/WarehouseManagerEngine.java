@@ -11,6 +11,7 @@ import io.EmployeeFileReader;
 import io.PayslipFileReader;
 import io.PayslipFileWriter;
 import io.FileConstants;
+import util.Messages;
 
 
 import java.io.FileNotFoundException;
@@ -24,9 +25,7 @@ You can modify any code in this class including the existing method signatures p
 public class WarehouseManagerEngine {
     private ArrayList<Employee> employees;
     private ArrayList<Payslip> loadedPayslips;
-    private ArrayList<Payslip> currentPayslips;
-    private final String TERMINATE = "X";
-    private final int VALID_ARGS_NUM = 5;
+    private final ArrayList<Payslip> currentPayslips;
     private boolean hasGeneratedCurrentPayslips;
     private boolean payslipsModified;
 
@@ -139,6 +138,7 @@ public class WarehouseManagerEngine {
 
     private boolean validateArgs(String[] args) {
         //TODO: validate the args
+        int VALID_ARGS_NUM = 5;
         if (args.length < VALID_ARGS_NUM) {
             System.out.println(Messages.INVALID_ARGS_USAGE);
             return false;
@@ -153,12 +153,15 @@ public class WarehouseManagerEngine {
             return false;
         }
 
-        if (floors < 1 || floors > 3){
+        int MAX_FLOORS_NUM = 3;
+        int MIN_FLOORS_NUM = 1;
+        if (floors < MIN_FLOORS_NUM || floors > MAX_FLOORS_NUM) {
             System.out.println(Messages.INVALID_FLOORS);
             return false;
         }
 
-        if (rows < 4 || columns < 4){
+        int MIN_COLS_OR_ROWS = 4;
+        if (rows < MIN_COLS_OR_ROWS || columns < MIN_COLS_OR_ROWS){
             System.out.println(Messages.INVALID_ROWs_COLS);
             return false;
         }
@@ -195,6 +198,7 @@ public class WarehouseManagerEngine {
 
             String input = SCANNER.nextLine().trim();
 
+            String TERMINATE = "X";
             if(input.equalsIgnoreCase(TERMINATE)){
                 isRunning = false;
             }else{

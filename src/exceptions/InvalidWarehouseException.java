@@ -1,4 +1,4 @@
 package exceptions;
 
-public class InvalidWarehouseException {
+public class InvalidWarehouseException extends Throwable {
 }

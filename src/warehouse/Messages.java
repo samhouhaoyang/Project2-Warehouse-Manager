@@ -95,5 +95,10 @@ public final class Messages {
 
     public static void printLegend() {
         System.out.println("Legend: # Wall | . Aisle | X Restricted | S Shelf | O Start | F Forklift");
+        System.out.println();
+    }
+
+    public static void printFloorNumber(int floorNumber) {
+        System.out.printf("==========Floor: %d==========%n", floorNumber);
     }
 }

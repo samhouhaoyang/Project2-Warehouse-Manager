@@ -1,24 +1,14 @@
 package warehouse;
 
 /**
- Student Name - Haoyang Hou
- Student Id - 1462169
- Student email - houhh@student.unimelb.edu.au
-
- AI Usage Declaration:
- AI tools were used to support debugging, code review, explanation of Java/OOP concepts,
- and refinement of comments/style. The final code was reviewed, tested, and understood
- by the student.
- */
-
-/**
- * Represents an item stored on a warehouse shelf.
+ * Represents an item stored on a shelf or carried by the forklift.
  */
 public class Item {
-    private final String name;
+
+    private  String name;
 
     /**
-     * Creates an item with the specified name.
+     * Creates an item.
      *
      * @param name item name
      */
@@ -27,12 +17,19 @@ public class Item {
     }
 
     /**
-     * Gets the name of the item.
-     *
-     * @return item name
+     * Copy constructor for Item
+     * @param item Item object to copy from
      */
-    public String getName() {
-        return name;
+    public Item(Item item) {
+        if(item!= null) {
+            this.name = item.name;
+        }
     }
 
+    public String getName() { return this.name; } //IMP_NOTE:Returning Strings doesnt cause privacy leaks, strings are immutable
+
+    @Override
+    public String toString() {
+        return this.name; //IMP_NOTE:Returning Strings doesnt cause privacy leaks, strings are immutable
+    }
 }

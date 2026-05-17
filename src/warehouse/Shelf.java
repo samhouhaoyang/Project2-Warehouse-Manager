@@ -5,138 +5,174 @@
  * to manage items, similar to how an ArrayList works.
  */
 package warehouse;
+
+import enums.ShelfType;
+
 public class Shelf {
+    private static final int INITIAL_CAPACITY = 4;
+    private static final int SIZE_MULTIPLIER = 2;
 
-    /**
-     * Internal array holding the items on the shelf.
-     * The array may have unused capacity beyond {@code size}.
-     */
+    private final ShelfType shelfType;
     private Item[] items;
-
-    /**
-     * The number of items currently stored on the shelf.
-     */
     private int size;
 
     /**
-     * Creates an empty shelf with an initial fixed capacity.
+     * Creates an empty shelf with the given shelf type.
+     *
+     * @param shelfType the type of this shelf
      */
-    public Shelf() {
-        this.items = new Item[Constants.INITIAL_SHELF_CAPACITY];
+    public Shelf(ShelfType shelfType) {
+        this.shelfType = shelfType;
+        this.items = new Item[INITIAL_CAPACITY];
         this.size = 0;
     }
 
     /**
-     * Copy constructor
-     * @param shelf Shelf object to copy from
+     * Copy constructor.
+     * Creates a deep copy of another shelf.
+     *
+     * @param other the shelf to copy
      */
-    public Shelf(Shelf shelf) {
-        this.items = new Item[shelf.items.length];
-        for(int i = 0; i < shelf.items.length; i++) {
-            if(shelf.items[i] != null) {
-                this.items[i] = new Item(shelf.items[i]);
-                this.size++;
+    public Shelf(Shelf other) {
+        this.shelfType = other.shelfType;
+        this.items = new Item[other.items.length];
+        this.size = other.size;
+
+        for (int i = 0; i < other.size; i++) {
+            if (other.items[i] != null) {
+                this.items[i] = new Item(other.items[i]);
             }
         }
     }
 
     /**
-     * Adds an item to the shelf.
-     * If the internal array is full, it is resized before insertion.
+     * Returns the type of this shelf.
      *
-     * @param item the item to add to the shelf
+     * @return shelf type
      */
-    public void addItem(Item item) {
-        // Resize the array if it is full
-        if (this.size == this.items.length) {
-            this.items = resizeItemArray(this.items, this.items.length * Constants.SIZE_MULTIPLIER);
-        }
-
-        // Insert item and increment the size
-        this.items[this.size++] = item;
+    public ShelfType getShelfType() {
+        return shelfType;
     }
 
     /**
-     * Removes an item from the shelf using a user-facing 1-based index.
+     * Returns the number of items currently stored on this shelf.
      *
-     * @param userIndex index entered by the user (1-based)
-     * @return the removed item, or {@code null} if the index is invalid
+     * @return number of items
+     */
+    public int getSize() {
+        return size;
+    }
+
+    /**
+     * Checks whether this shelf is empty.
+     *
+     * @return true if there are no items, false otherwise
+     */
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    /**
+     * Adds an item to the shelf.
+     * If the internal array is full, the array is resized first.
+     *
+     * @param item the item to add
+     */
+    public void addItem(Item item) {
+        if (item == null) {
+            return;
+        }
+
+        if (size == items.length) {
+            items = resizeItemArray(items, items.length * SIZE_MULTIPLIER);
+        }
+
+        items[size] = item;
+        size++;
+    }
+
+    /**
+     * Removes an item using a 1-based user index.
+     *
+     * For example:
+     * userIndex = 1 removes the first item.
+     *
+     * @param userIndex the 1-based item index entered by the user
+     * @return the removed item, or null if the index is invalid
      */
     public Item removeItemByUserIndex(int userIndex) {
-        // Convert user input to zero-based index
-        int index = userIndex - 1;
+        int arrayIndex = userIndex - 1;
 
-        // Validate index
-        if (index < 0 || index >= this.size) {
+        if (arrayIndex < 0 || arrayIndex >= size) {
             return null;
         }
 
-        // Store the item to return
-        Item removed = new Item(this.items[index]); //IMP_NOTE: copy constructor to avoid privacy leaks
+        Item removedItem = items[arrayIndex];
+        shiftLeftFrom(arrayIndex);
 
-        // Shift remaining items left to fill the gap
-        shiftLeft(index);
+        size--;
+        items[size] = null;
 
-        // Decrease size and clear last reference
-        this.size--;
-        this.items[this.size] = null;
-
-        return removed;
+        return removedItem;
     }
 
     /**
-     * Returns a snapshot copy of the items currently on the shelf.
+     * Returns a deep copy of the currently stored items.
+     * This avoids leaking the internal item array.
      *
-     * This method prevents external classes from modifying
-     * the internal array directly (privacy-safe design).
-     *
-     * @return a new array containing the current items
+     * @return copied item array
      */
     public Item[] getItemsSnapshot() {
-        Item[] snapshot = new Item[this.size];
+        Item[] snapshot = new Item[size];
 
-        // Copy only valid items into the snapshot
-        for (int i = 0; i < this.size; i++) {
-            snapshot[i] = new Item(this.items[i]); //IMP_NOTE: copy constructor to avoid privacy leaks
+        for (int i = 0; i < size; i++) {
+            if (items[i] != null) {
+                snapshot[i] = new Item(items[i]);
+            }
         }
 
         return snapshot;
     }
 
     /**
-     * Returns the number of items currently on the shelf.
-     *
-     * @return item count
+     * Prints all items on this shelf using 1-based numbering.
      */
-    public int getSize() {
-        return this.size;
+    public void printItems() {
+        if (isEmpty()) {
+            System.out.println("No items in shelf");
+            return;
+        }
+
+        for (int i = 0; i < size; i++) {
+            System.out.printf("%d. %s%n", i + 1, items[i]);
+        }
     }
 
     /**
-     * Resizes the internal item array to a new capacity.
+     * Resizes the item array.
      *
-     * @param oldArray the original array
-     * @param newSize the new desired capacity
-     * @return the resized array
+     * @param original the original item array
+     * @param newSize  the new capacity
+     * @return resized item array
      */
-    private Item[] resizeItemArray(Item[] oldArray, int newSize) {
-        Item[] newArray = new Item[newSize];
+    private Item[] resizeItemArray(Item[] original, int newSize) {
+        Item[] resized = new Item[newSize];
 
-        // Copy existing elements into the new array
-        System.arraycopy(oldArray, 0, newArray, 0, oldArray.length);
+        for (int i = 0; i < original.length; i++) {
+            resized[i] = original[i];
+        }
 
-        return newArray;
+        return resized;
     }
 
     /**
-     * Shifts all items one position to the left starting from a given index.
-     * This is used after an item is removed to maintain array continuity.
+     * Shifts all items after the removed item one position to the left.
      *
-     * @param fromIndex index from which shifting begins
+     * @param startIndex the index where shifting begins
      */
-    private void shiftLeft(int fromIndex) {
-        for (int i = fromIndex; i < this.size - 1; i++) {
-            this.items[i] = this.items[i + 1];
+    private void shiftLeftFrom(int startIndex) {
+        for (int i = startIndex; i < size - 1; i++) {
+            items[i] = items[i + 1];
         }
     }
 }

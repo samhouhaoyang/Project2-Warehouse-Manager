@@ -1,151 +1,196 @@
-/**
- * Represents a single cell in the warehouse grid.
- *
- * Each cell has:
- *  - a fixed position (row, column)
- *  - a mutable type (wall, aisle, shelf, start, restricted)
- *  - an optional Shelf object if the cell is a shelf
- *
- * This class is responsible ONLY for storing cell state.
- * It does not handle movement, input, or rendering logic.
- */
 package warehouse;
 
+import enums.CellType;
+import enums.ShelfType;
+
+/**
+ * Represents a single cell on a warehouse floor.
+ * A cell stores its row, column, cell type, and optionally a shelf.
+ */
 public class WarehouseCell {
-
-    /* ===================== POSITION (IMMUTABLE) ===================== */
-
-    // Row index of this cell in the warehouse grid (never changes)
     private final int row;
-
-    // Column index of this cell in the warehouse grid (never changes)
     private final int col;
-
-    /* ===================== CELL STATE ===================== */
-
-    // Current type of the cell (WALL, AISLE, SHELF, START, RESTRICTED)
     private CellType type;
-
-    // Shelf stored in this cell (null if the cell is not a shelf)
     private Shelf shelf;
 
     /**
-     * Creates a new warehouse cell at a specific position with an initial type.
+     * Creates a warehouse cell at the given row and column.
      *
      * @param row  the row index of the cell
      * @param col  the column index of the cell
-     * @param type the initial type of the cell
+     * @param type the type of this cell
      */
     public WarehouseCell(int row, int col, CellType type) {
         this.row = row;
         this.col = col;
         this.type = type;
-
-        // Shelf is only created explicitly when needed
         this.shelf = null;
     }
 
-    /* ===================== ACCESSORS ===================== */
-
     /**
-     * Returns the row index of this cell.
+     * Copy constructor.
      *
-     * @return row index
+     * @param other the warehouse cell to copy
      */
+    public WarehouseCell(WarehouseCell other) {
+        this.row = other.row;
+        this.col = other.col;
+        this.type = other.type;
+
+        if (other.shelf == null) {
+            this.shelf = null;
+        } else {
+            this.shelf = new Shelf(other.shelf);
+        }
+    }
+
     public int getRow() {
-        return this.row;
+        return row;
     }
 
-    /**
-     * Returns the column index of this cell.
-     *
-     * @return column index
-     */
     public int getCol() {
-        return this.col;
+        return col;
     }
 
-    /**
-     * Returns the current type of this cell.
-     *
-     * @return cell type
-     */
     public CellType getType() {
-        return this.type;
+        return type;
     }
-
-    /* ===================== MUTATORS ===================== */
 
     /**
      * Sets the type of this cell.
-     *
-     * If the cell is changed to a non-SHELF type, any existing shelf
-     * reference is cleared to maintain a consistent state.
+     * If the cell is no longer a shelf, the internal shelf is removed.
      *
      * @param type the new cell type
      */
     public void setType(CellType type) {
         this.type = type;
 
-        // Enforce invariant: non-shelf cells must not hold shelves
         if (type != CellType.SHELF) {
             this.shelf = null;
         }
     }
 
-    /**
-     * Attaches a new empty shelf to this cell.
-     *
-     * This method:
-     *  - changes the cell type to SHELF
-     *  - creates a new Shelf object
-     *
-     * Used during warehouse generation.
-     */
-    public void attachNewShelf() {
-        this.type = CellType.SHELF;
-        this.shelf = new Shelf();
+    public boolean isWall() {
+        return type == CellType.WALL;
     }
 
-    /* ===================== SHELF QUERIES ===================== */
+    public boolean isAisle() {
+        return type == CellType.AISLE;
+    }
 
-    /**
-     * Returns true if this cell currently contains a shelf.
-     *
-     * @return true if shelf exists, false otherwise
-     */
+    public boolean isRestricted() {
+        return type == CellType.RESTRICTED;
+    }
+
+    public boolean isShelfCell() {
+        return type == CellType.SHELF;
+    }
+
+    public boolean isStart() {
+        return type == CellType.START;
+    }
+
     public boolean hasShelf() {
-        return this.shelf != null;
+        return shelf != null;
     }
 
     /**
-     * Returns the shelf stored in this cell.
+     * Returns a copy of the shelf stored in this cell.
+     * This avoids exposing the real internal shelf object.
      *
-     * May return null if the cell is not a shelf.
-     * Callers are expected to check hasShelf() first.
+     * @return a copy of the shelf, or null if this cell has no shelf
+     */
+    public Shelf getShelfSnapshot() {
+        if (shelf == null) {
+            return null;
+        }
+
+        return new Shelf(shelf);
+    }
+
+    /**
+     * Returns the type of the shelf stored in this cell.
+     * This avoids exposing the actual shelf object.
      *
-     * @return shelf or null
+     * @return the shelf type, or null if this cell has no shelf
      */
-    public Shelf getShelf() {
-        return new Shelf(this.shelf); //IMP_NOTE: return a copy of the shelf to avoid privacy leaks
-    }
+    public ShelfType getShelfType() {
+        if (shelf == null) {
+            return null;
+        }
 
-    //IMP_NOTE: Shelf belongs to cell, if we need to modify a shelf in the cell, we need to pass the control (ie invoking a method) to cell first then and then to shelf
-
-    /**
-     * Adds an item to shelf
-     * @param item Item to be added
-     */
-    public void addItemtoShelf(Item item) {
-        this.shelf.addItem(item);
+        return shelf.getShelfType();
     }
 
     /**
-     * Removes an item from the shelf
-     * @param index removes the item based on the index passed.
-     * @return returns the removed item
+     * Marks this cell as restricted.
+     * A restricted cell cannot also contain a shelf.
      */
-    public Item removeItemfromShelf(int index) {
-        return this.shelf.removeItemByUserIndex(index);
+    public void markRestricted() {
+        this.type = CellType.RESTRICTED;
+        this.shelf = null;
+    }
+
+    /**
+     * Attaches a shelf to this cell.
+     * If the shelf already exists, it keeps the existing shelf.
+     *
+     * @param shelfType the type of shelf to attach
+     */
+    public void attachShelf(ShelfType shelfType) {
+        this.type = CellType.SHELF;
+
+        if (this.shelf == null) {
+            this.shelf = new Shelf(shelfType);
+        }
+    }
+
+    /**
+     * Adds an item to the shelf stored in this cell.
+     * This modifies the real internal shelf without exposing it.
+     *
+     * @param item the item to add
+     */
+    public void addItemToShelf(Item item) {
+        if (this.shelf != null && item != null) {
+            this.shelf.addItem(item);
+        }
+    }
+
+    /**
+     * Removes an item from this cell's shelf using the user's 1-based item index.
+     *
+     * @param userIndex the 1-based index entered by the user
+     * @return the removed item, or null if there is no shelf or invalid index
+     */
+    public Item removeItemFromShelf(int userIndex) {
+        if (this.shelf == null) {
+            return null;
+        }
+
+        return this.shelf.removeItemByUserIndex(userIndex);
+    }
+
+    /**
+     * Returns the display symbol for this cell.
+     * This does not consider forklift position.
+     *
+     * @return the display symbol
+     */
+    public char getSymbol() {
+        switch (type) {
+            case WALL:
+                return '#';
+            case AISLE:
+                return '.';
+            case RESTRICTED:
+                return 'X';
+            case SHELF:
+                return 'S';
+            case START:
+                return 'O';
+            default:
+                return '?';
+        }
     }
 }

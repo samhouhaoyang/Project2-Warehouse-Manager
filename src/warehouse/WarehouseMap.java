@@ -1,5 +1,7 @@
 package warehouse;
 
+import utils.Constants;
+
 /**
  * Represents the complete warehouse map.
  * A warehouse map contains multiple warehouse floors.
@@ -39,7 +41,7 @@ public class WarehouseMap {
      * @return true if the floor number is valid, false otherwise
      */
     public boolean isValidFloorNumber(int floorNumber) {
-        return floorNumber >= 1 && floorNumber <= warehouseFloors.length;
+        return floorNumber >= Constants.MIN_VALID_FLOOR_NUMBER && floorNumber <= warehouseFloors.length;
     }
 
     /**

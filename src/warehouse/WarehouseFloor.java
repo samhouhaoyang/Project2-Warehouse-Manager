@@ -2,14 +2,14 @@ package warehouse;
 
 import enums.CellType;
 import enums.ShelfType;
+import utils.Constants;
 
 /**
  * Represents one floor of the warehouse.
  * Each floor has its own 2D grid and its own forklift.
  */
 public class WarehouseFloor {
-    private static final int START_ROW = 1;
-    private static final int START_COL = 1;
+
 
     private final int floorNumber;
     private final int rows;
@@ -53,7 +53,7 @@ public class WarehouseFloor {
             }
         }
 
-        grid[START_ROW][START_COL].setType(CellType.START);
+        grid[Constants.START_ROW][Constants.START_COL].setType(CellType.START);
     }
 
     public int getFloorNumber() {

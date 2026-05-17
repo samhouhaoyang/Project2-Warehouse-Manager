@@ -2,9 +2,10 @@ package io;
 
 import employees.Payslip;
 
-import employees.PayslipConstants;
+
 import exceptions.IncorrectTypeException;
 import exceptions.InvalidLineException;
+import utils.Constants;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -64,9 +65,9 @@ public class PayslipFileReader {
     public Payslip processLine(String line, int lineNumber)
             throws IncorrectTypeException, InvalidLineException {
 
-        String[] lineArray = line.split(FileConstants.CSV_DELIMITER, -1);
+        String[] lineArray = line.split(Constants.CSV_DELIMITER, -1);
 
-        if (lineArray.length != FileConstants.PAYSLIP_FIELD_COUNT) {
+        if (lineArray.length != Constants.PAYSLIP_FIELD_COUNT) {
             throw new InvalidLineException(
                     String.format("Incorrect Payslips line at line %d. Skipping this line.",
                             lineNumber)

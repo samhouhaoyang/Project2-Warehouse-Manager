@@ -100,7 +100,7 @@ public class WarehouseCell {
      *
      * @return a copy of the shelf, or null if this cell has no shelf
      */
-    public Shelf getShelfSnapshot() {
+    public Shelf getShelf() {
         if (shelf == null) {
             return null;
         }

@@ -10,8 +10,9 @@ import enums.SupervisorMenuOption;
 import io.EmployeeFileReader;
 import io.PayslipFileReader;
 import io.PayslipFileWriter;
-import io.FileConstants;
-import util.Messages;
+
+import utils.Constants;
+import utils.Messages;
 
 
 import java.io.FileNotFoundException;
@@ -106,7 +107,7 @@ public class WarehouseManagerEngine {
 
     private void readPayslips() {
         PayslipFileReader reader = new PayslipFileReader();
-        loadedPayslips = reader.readPayslips(FileConstants.PAYSLIPS_FILE_PATH);
+        loadedPayslips = reader.readPayslips(Constants.PAYSLIPS_FILE_PATH);
     }
 
 
@@ -153,9 +154,8 @@ public class WarehouseManagerEngine {
             return false;
         }
 
-        int MAX_FLOORS_NUM = 3;
-        int MIN_FLOORS_NUM = 1;
-        if (floors < MIN_FLOORS_NUM || floors > MAX_FLOORS_NUM) {
+
+        if (floors < Constants.MIN_VALID_FLOOR_NUMBER || floors > Constants.MAX_VALID_FLOOR_NUMBER) {
             System.out.println(Messages.INVALID_FLOORS);
             return false;
         }

@@ -2,6 +2,7 @@ package io;
 
 import employees.*;
 import enums.DesignationType;
+import utils.Constants;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -71,9 +72,9 @@ public class EmployeeFileReader {
         }
     }
     public Employee processLine(String line, int lineNumber){
-        String[] lineArray = line.split(FileConstants.CSV_DELIMITER, -1);
+        String[] lineArray = line.split(Constants.CSV_DELIMITER, -1);
         // incorrect number of columns
-        if (lineArray.length < FileConstants.EMPLOYEE_MIN_FIELD_COUNT) {
+        if (lineArray.length < Constants.EMPLOYEE_MIN_FIELD_COUNT) {
             System.out.printf(
                     "Incorrect Employees line at line %d. Skipping this line.%n",
                     lineNumber
@@ -88,7 +89,7 @@ public class EmployeeFileReader {
         String managerId = "";
 
         // handles manager if linked to one
-        if(lineArray.length >= FileConstants.EMPLOYEE_MAX_FIELD_COUNT){
+        if(lineArray.length >= Constants.EMPLOYEE_MAX_FIELD_COUNT){
             managerId = lineArray[4].trim();
         }
 

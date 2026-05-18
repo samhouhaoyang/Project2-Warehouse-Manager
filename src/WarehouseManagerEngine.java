@@ -11,8 +11,10 @@ import io.EmployeeFileReader;
 import io.PayslipFileReader;
 import io.PayslipFileWriter;
 
+import io.WarehouseFileReader;
 import utils.Constants;
 import utils.Messages;
+import warehouse.WarehouseMap;
 
 
 import java.io.FileNotFoundException;
@@ -180,12 +182,26 @@ public class WarehouseManagerEngine {
 
 
     private void loadFiles() {
-        //initialiseWarehouseMap(floors, rows, columns);
-        //readWarehouseMap(warehouseMapFilePath);
+        WarehouseMap warehouseMap = new WarehouseMap(floors, rows, columns);
+        readWarehouseMap(warehouseMap);
+        // below two line for testing only
+        Messages.printLegend();
+        warehouseMap.printMap();
+
+
         readEmployees(employeesFilePath);
         readPayslips();
     }
 
+    private void readWarehouseMap(WarehouseMap warehouseMap) {
+        WarehouseFileReader reader = new WarehouseFileReader();
+
+        try {
+            reader.readWarehouseFile(warehouseMapFilePath, warehouseMap);
+        } catch (FileNotFoundException e) {
+            System.out.println(Messages.FILE_PROCESSING_ERROR);
+        }
+    }
 
     private void runMainMenuLoop()  {
         Messages.printWelcomeA2();
@@ -198,8 +214,8 @@ public class WarehouseManagerEngine {
 
             String input = SCANNER.nextLine().trim();
 
-            String TERMINATE = "X";
-            if(input.equalsIgnoreCase(TERMINATE)){
+
+            if(input.equalsIgnoreCase(Constants.TERMINATE)){
                 isRunning = false;
             }else{
                 Employee currEmployee = findEmployeeById(input);

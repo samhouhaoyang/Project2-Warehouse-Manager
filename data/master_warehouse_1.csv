@@ -3,6 +3,7 @@ floor,row,col,cell_type,shelf_type,item_name
 1,1,3,RESTRICTED,-,-
 2,3,2,SHELF,GROCERY,Olive Oil
 3,5,7,RESTRICTED,
+
 3,2,1,SHELF,FURNITURE,Office Desk
 -1,2,4,,FURNITURE,Coffee Table
 2,2,3,SHELF,CLOTHING,Denim Jacket

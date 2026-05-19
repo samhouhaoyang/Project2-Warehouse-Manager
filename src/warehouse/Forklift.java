@@ -71,7 +71,11 @@ public class Forklift {
      * @return the dropped item, or null if none was carried
      */
     public Item drop() {
-        Item item = new Item(this.carriedItem); //IMP_NOTE: copy constructor to avoid privacy leak
+        if (this.carriedItem == null) {
+            return null;
+        }
+
+        Item item = new Item(this.carriedItem);
         this.carriedItem = null;
         return item;
     }

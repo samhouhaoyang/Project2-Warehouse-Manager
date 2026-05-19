@@ -31,4 +31,6 @@ public class Constants {
 
     public static final int MIN_VALID_FLOOR_NUMBER = 1;
     public static final int MAX_VALID_FLOOR_NUMBER = 3;
+
+    public static final int MIN_VALID_ITEM_INDEX = 1;
 }

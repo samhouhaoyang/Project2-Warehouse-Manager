@@ -5,6 +5,7 @@ import enums.Direction;
 import enums.MovementResult;
 import enums.ShelfType;
 import utils.Constants;
+import utils.Messages;
 
 /**
  * Represents one floor of the warehouse.
@@ -93,25 +94,18 @@ public class WarehouseFloor {
         return grid[row][col].getType();
     }
 
-    public boolean isWallAt(int row, int col) {
-        return grid[row][col].isWall();
+    public boolean isShelfAt(int row, int col) {
+        return isInBounds(row, col) && grid[row][col].isShelfCell();
     }
 
-    public boolean isAisleAt(int row, int col) {
-        return grid[row][col].isAisle();
+    public boolean isWallAt(int row, int col) {
+        return isInBounds(row, col) && grid[row][col].isWall();
     }
 
     public boolean isRestrictedAt(int row, int col) {
-        return grid[row][col].isRestricted();
+        return isInBounds(row, col) && grid[row][col].isRestricted();
     }
 
-    public boolean isShelfAt(int row, int col) {
-        return grid[row][col].isShelfCell();
-    }
-
-    public boolean isStartAt(int row, int col) {
-        return grid[row][col].isStart();
-    }
 
     public boolean hasShelfAt(int row, int col) {
         return grid[row][col].hasShelf();
@@ -193,9 +187,12 @@ public class WarehouseFloor {
      * @return a copy of the cell
      */
     public WarehouseCell getCellSnapshotAt(int row, int col) {
+        if (!isInBounds(row, col)) {
+            return null;
+        }
+
         return new WarehouseCell(grid[row][col]);
     }
-
     /**
      * Prints this warehouse floor.
      * The forklift position is displayed as F.
@@ -217,18 +214,16 @@ public class WarehouseFloor {
         }
     }
 
-    public MovementResult moveForklift(String input) {
+    public MovementResult moveForklift(Direction direction) {
         int nextRow = forklift.getRow();
         int nextCol = forklift.getCol();
 
-        String directionText = input.toUpperCase();
-        Direction direction = Direction.fromInput(input);
         switch (direction) {
             case UP -> nextRow--;
             case DOWN -> nextRow++;
             case LEFT -> nextCol--;
             case RIGHT -> nextCol++;
-            case INVALID -> {
+            default -> {
                 return MovementResult.INVALID_INPUT;
             }
         }
@@ -248,4 +243,26 @@ public class WarehouseFloor {
     public void resetForklift() {
         forklift.resetSessionState();
     }
+    public void printShelfItemsAt(int row, int col) {
+        if (!isInBounds(row, col) || !isShelfAt(row, col)) {
+            System.out.println(Messages.NO_ITEMS_ON_SHELF);
+            return;
+        }
+        WarehouseCell cellSnapshot = getCellSnapshotAt(row, col);
+
+        if (cellSnapshot == null || cellSnapshot.getShelf() == null) {
+            System.out.println(Messages.NO_ITEMS_ON_SHELF);
+            return;
+        }
+        Shelf shelf = cellSnapshot.getShelf();
+
+        if (shelf == null || shelf.isEmpty()) {
+            System.out.println(Messages.NO_ITEMS_ON_SHELF);
+            return;
+        }
+
+        shelf.printItems();
+    }
 }
+
+

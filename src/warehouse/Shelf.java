@@ -7,6 +7,7 @@
 package warehouse;
 
 import enums.ShelfType;
+import utils.Messages;
 
 public class Shelf {
     private static final int INITIAL_CAPACITY = 4;
@@ -139,7 +140,7 @@ public class Shelf {
      */
     public void printItems() {
         if (isEmpty()) {
-            System.out.println("No items in shelf");
+            System.out.println(Messages.NO_ITEMS_ON_SHELF);
             return;
         }
 

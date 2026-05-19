@@ -3,11 +3,8 @@ import java.io.File;
 import java.util.Scanner;
 
 import employees.*;
-import enums.MovementResult;
-import enums.OperatorMenuOption;
-import enums.PayrollManagerMenuOption;
+import enums.*;
 
-import enums.SupervisorMenuOption;
 import io.EmployeeFileReader;
 import io.PayslipFileReader;
 import io.PayslipFileWriter;
@@ -15,6 +12,8 @@ import io.PayslipFileWriter;
 import io.WarehouseFileReader;
 import utils.Constants;
 import utils.Messages;
+import warehouse.Forklift;
+import warehouse.Item;
 import warehouse.WarehouseFloor;
 import warehouse.WarehouseMap;
 
@@ -355,16 +354,25 @@ public class WarehouseManagerEngine {
             warehouseMap.printMap();
 
             System.out.println();
-            System.out.println("Enter direction U/D/L/R, or Q to quit:");
+            Messages.printMovementOptions();
 
-            String input = SCANNER.nextLine().trim().toUpperCase();
+            String input = SCANNER.nextLine();
+            Direction direction = Direction.fromInput(input);
 
-            if (input.equals(Constants.QUIT)) {
-                currentFloor.getForklift().setSessionPaused(true);
-                isInShift = false;
-            } else {
-                MovementResult result = currentFloor.moveForklift(input);
-                handleMovementResult(employee, result);
+            switch (direction) {
+                case DELIVER -> deliverItemAtStart(employee, currentFloor);
+
+                case QUIT -> {
+                    currentFloor.getForklift().setSessionPaused(true);
+                    isInShift = false;
+                }
+
+                case UP, DOWN, LEFT, RIGHT -> {
+                    MovementResult result = currentFloor.moveForklift(direction);
+                    handleMovementResult(employee, currentFloor, result);
+                }
+
+                case INVALID -> System.out.println(Messages.INVALID_INPUT);
             }
 
             if (isInShift) {
@@ -373,24 +381,30 @@ public class WarehouseManagerEngine {
         }
     }
 
-    private void handleMovementResult(Employee employee, MovementResult result) {
+    private void handleMovementResult(Employee employee, WarehouseFloor floor,
+                                      MovementResult result) {
         switch (result) {
-            case MOVED:
-                break;
+            case MOVED -> handlePostMoveCell(employee, floor);
 
-            case WALL_HIT:
-                System.out.println("You hit a wall.");
+            case WALL_HIT -> {
+                System.out.println(Messages.HIT_WALL);
                 employee.getShiftSummary().updateWallHits();
-                break;
+            }
 
-            case RESTRICTED_HIT:
-                System.out.println("You cannot enter restricted areas.");
+            case RESTRICTED_HIT -> {
+                System.out.println(Messages.HIT_RESTRICTED);
                 employee.getShiftSummary().updateRestrictedAreaHits();
-                break;
+            }
 
-            case INVALID_INPUT:
-                System.out.println(Messages.INVALID_INPUT);
-                break;
+            case INVALID_INPUT -> System.out.println(Messages.INVALID_INPUT);
+        }
+    }
+    private void handlePostMoveCell(Employee employee, WarehouseFloor floor) {
+        Forklift forklift = floor.getForklift();
+
+        if (floor.isShelfAt(forklift.getRow(), forklift.getCol())) {
+            floor.markShelfVisitedAt(forklift.getRow(), forklift.getCol());
+            runShelfMenu(employee, floor);
         }
     }
 
@@ -513,5 +527,109 @@ public class WarehouseManagerEngine {
 
         return null;
     }
+
+
+    private void runShelfMenu(Employee employee, WarehouseFloor floor) {
+        boolean inShelfMenu = true;
+
+        while (inShelfMenu) {
+            Messages.printShelfMenu();
+
+            String input = SCANNER.nextLine();
+            ShelfMenuOption option = ShelfMenuOption.fromInput(input);
+
+            switch (option) {
+                case VIEW_ITEMS -> viewCurrentShelfItems(floor);
+
+                case PICK_ITEM -> pickItemFromCurrentShelf(floor);
+
+                case QUIT -> inShelfMenu = false;
+
+                case INVALID -> System.out.println(Messages.INVALID_INPUT);
+            }
+
+            if (inShelfMenu) {
+                System.out.println();
+            }
+        }
+    }
+
+    private void viewCurrentShelfItems(WarehouseFloor floor) {
+        Forklift forklift = floor.getForklift();
+        floor.printShelfItemsAt(forklift.getRow(), forklift.getCol());
+    }
+
+    private void pickItemFromCurrentShelf(WarehouseFloor floor) {
+        Forklift forklift = floor.getForklift();
+
+        if (forklift.isCarrying()) {
+            System.out.println(Messages.ALREADY_CARRYING);
+            return;
+        }
+
+        floor.printShelfItemsAt(forklift.getRow(), forklift.getCol());
+
+        System.out.print(Messages.ENTER_ITEM_INDEX);
+
+        int itemIndex;
+
+        try {
+            itemIndex = Integer.parseInt(SCANNER.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println(Messages.INVALID_INPUT);
+            return;
+        }
+
+        if (itemIndex < Constants.MIN_VALID_ITEM_INDEX) {
+            System.out.println(Messages.INVALID_INPUT);
+            return;
+        }
+
+        Item pickedItem = floor.removeItemFromShelfAt(
+                forklift.getRow(),
+                forklift.getCol(),
+                itemIndex
+        );
+
+        if (pickedItem == null) {
+            System.out.println(Messages.INVALID_INPUT);
+            return;
+        }
+
+        forklift.pickUp(pickedItem);
+        System.out.println(Messages.ITEM_PICKED);
+    }
+
+    /**
+     * Delivers the item currently carried by the forklift.
+     * The item can only be delivered when the forklift is at the START cell.
+     *
+     * @param employee the employee currently operating the forklift
+     * @param floor the current warehouse floor
+     */
+    private void deliverItemAtStart(Employee employee, WarehouseFloor floor) {
+        Forklift forklift = floor.getForklift();
+
+        if (!forklift.isCarrying()) {
+            System.out.println(Messages.NOT_CARRYING);
+            return;
+        }
+
+        if (!forklift.isAtStart()) {
+            System.out.println(Messages.MUST_STAND_ON_START);
+            return;
+        }
+
+        Item deliveredItem = forklift.drop();
+
+        if (deliveredItem == null) {
+            System.out.println(Messages.NOT_CARRYING);
+            return;
+        }
+
+        employee.getShiftSummary().updateItemDelivered();
+        System.out.println(Messages.ITEM_DELIVERED);
+    }
+
 }
 

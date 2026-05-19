@@ -1,6 +1,7 @@
 package warehouse;
 
 import enums.CellType;
+import enums.Direction;
 import enums.MovementResult;
 import enums.ShelfType;
 import utils.Constants;
@@ -216,25 +217,20 @@ public class WarehouseFloor {
         }
     }
 
-    public MovementResult moveForklift(String direction) {
+    public MovementResult moveForklift(String input) {
         int nextRow = forklift.getRow();
         int nextCol = forklift.getCol();
 
-        switch (direction.toUpperCase()) {
-            case "U":
-                nextRow--;
-                break;
-            case "D":
-                nextRow++;
-                break;
-            case "L":
-                nextCol--;
-                break;
-            case "R":
-                nextCol++;
-                break;
-            default:
+        String directionText = input.toUpperCase();
+        Direction direction = Direction.fromInput(input);
+        switch (direction) {
+            case UP -> nextRow--;
+            case DOWN -> nextRow++;
+            case LEFT -> nextCol--;
+            case RIGHT -> nextCol++;
+            case INVALID -> {
                 return MovementResult.INVALID_INPUT;
+            }
         }
 
         if (!isInBounds(nextRow, nextCol) || isWallAt(nextRow, nextCol)) {

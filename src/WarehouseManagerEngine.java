@@ -359,7 +359,7 @@ public class WarehouseManagerEngine {
 
             String input = SCANNER.nextLine().trim().toUpperCase();
 
-            if (input.equals(Constants.TERMINATE)) {
+            if (input.equals(Constants.QUIT)) {
                 currentFloor.getForklift().setSessionPaused(true);
                 isInShift = false;
             } else {
@@ -415,7 +415,7 @@ public class WarehouseManagerEngine {
         Payslip payslip = findPayslipByEmployeeId(payslipSource, employee.getEmployeeId());
 
         if (payslip == null) {
-            Messages.printPaySlipNotGenerated();
+            System.out.println("Employee " + employee.getEmployeeId() + "'s payslip not found.");
             return;
         }
 

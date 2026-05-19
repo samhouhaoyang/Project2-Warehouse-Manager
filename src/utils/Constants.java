@@ -2,6 +2,7 @@ package utils;
 
 public class Constants {
     public static final String TERMINATE = "X";
+    public static final String QUIT = "Q";
     public static final int VALID_ARGS_NUM = 5;
 
     public static final int START_COL = 1;

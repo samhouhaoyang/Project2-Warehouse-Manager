@@ -41,4 +41,6 @@ public class ShiftSummary {
                 "No. of Walls hit: %d%n" +
                 "No. of Restricted Areas hit: %d%n", itemsDelivered, wallHits, restrictedAreaHits);
     }
+
+
 }

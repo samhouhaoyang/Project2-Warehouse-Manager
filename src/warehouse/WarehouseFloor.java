@@ -1,6 +1,7 @@
 package warehouse;
 
 import enums.CellType;
+import enums.MovementResult;
 import enums.ShelfType;
 import utils.Constants;
 
@@ -213,5 +214,42 @@ public class WarehouseFloor {
 
             System.out.println();
         }
+    }
+
+    public MovementResult moveForklift(String direction) {
+        int nextRow = forklift.getRow();
+        int nextCol = forklift.getCol();
+
+        switch (direction.toUpperCase()) {
+            case "U":
+                nextRow--;
+                break;
+            case "D":
+                nextRow++;
+                break;
+            case "L":
+                nextCol--;
+                break;
+            case "R":
+                nextCol++;
+                break;
+            default:
+                return MovementResult.INVALID_INPUT;
+        }
+
+        if (!isInBounds(nextRow, nextCol) || isWallAt(nextRow, nextCol)) {
+            return MovementResult.WALL_HIT;
+        }
+
+        if (isRestrictedAt(nextRow, nextCol)) {
+            return MovementResult.RESTRICTED_HIT;
+        }
+
+        forklift.moveTo(nextRow, nextCol);
+        return MovementResult.MOVED;
+    }
+
+    public void resetForklift() {
+        forklift.resetSessionState();
     }
 }

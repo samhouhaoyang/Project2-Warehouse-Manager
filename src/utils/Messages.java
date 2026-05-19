@@ -133,7 +133,7 @@ public final class Messages {
     public static void printOperatorMenu(Employee employee) {
         System.out.printf("=== Operator Menu — %s [%s] ===%n", employee.getEmployeeName(), employee.getDesignation());
         System.out.println("1. Start warehouse shift");
-        System.out.println("2. Resume last shift.");
+        System.out.println("2. Resume last shift");
         System.out.println("3. View my shift summary");
         System.out.println("4. View my payslip");
         System.out.println("5. Logout");
@@ -143,7 +143,7 @@ public final class Messages {
     public static void printSupervisorMenu(Employee employee) {
         System.out.printf("=== Supervisor Menu — %s [%s] ===%n", employee.getEmployeeName(), employee.getDesignation());
         System.out.println("1. Start warehouse shift");
-        System.out.println("2. Resume last shift.");
+        System.out.println("2. Resume last shift");
         System.out.println("3. View my shift summary");
         System.out.println("4. View my payslip");
         System.out.println("5. View reportees' shift summary");

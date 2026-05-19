@@ -3,6 +3,7 @@ import java.io.File;
 import java.util.Scanner;
 
 import employees.*;
+import enums.MovementResult;
 import enums.OperatorMenuOption;
 import enums.PayrollManagerMenuOption;
 
@@ -14,6 +15,7 @@ import io.PayslipFileWriter;
 import io.WarehouseFileReader;
 import utils.Constants;
 import utils.Messages;
+import warehouse.WarehouseFloor;
 import warehouse.WarehouseMap;
 
 
@@ -32,6 +34,10 @@ public class WarehouseManagerEngine {
     private boolean hasGeneratedCurrentPayslips;
     private boolean payslipsModified;
 
+    private WarehouseMap warehouseMap;
+    private int activeFloorNumber;
+
+
     private int floors;
     private int rows;
     private int columns;
@@ -44,6 +50,7 @@ public class WarehouseManagerEngine {
         currentPayslips = new ArrayList<>();
         hasGeneratedCurrentPayslips = false;
         payslipsModified = false;
+        activeFloorNumber = Constants.MIN_VALID_FLOOR_NUMBER;
     }
 
     private static final Scanner SCANNER = new Scanner(System.in);
@@ -182,11 +189,11 @@ public class WarehouseManagerEngine {
 
 
     private void loadFiles() {
-        WarehouseMap warehouseMap = new WarehouseMap(floors, rows, columns);
+        warehouseMap = new WarehouseMap(floors, rows, columns);
         readWarehouseMap(warehouseMap);
         // below two line for testing only
-        Messages.printLegend();
-        warehouseMap.printMap();
+        //Messages.printLegend();
+        //warehouseMap.printMap();
 
 
         readEmployees(employeesFilePath);
@@ -329,11 +336,68 @@ public class WarehouseManagerEngine {
     }
 
     private void startWarehouseShift(Employee employee) {
-        System.out.println("Start warehouse shift not implemented yet.");
+        activeFloorNumber = Constants.MIN_VALID_FLOOR_NUMBER;
+        resetAllForklifts();
+        runWarehouseShift(employee);
     }
 
     private void resumeWarehouseShift(Employee employee) {
-        System.out.println("Resume warehouse shift not implemented yet.");
+        runWarehouseShift(employee);
+    }
+
+    private void runWarehouseShift(Employee employee) {
+        boolean isInShift = true;
+
+        while (isInShift) {
+            WarehouseFloor currentFloor = warehouseMap.getFloorByNumber(activeFloorNumber);
+
+            Messages.printLegend();
+            warehouseMap.printMap();
+
+            System.out.println();
+            System.out.println("Enter direction U/D/L/R, or Q to quit:");
+
+            String input = SCANNER.nextLine().trim().toUpperCase();
+
+            if (input.equals(Constants.TERMINATE)) {
+                currentFloor.getForklift().setSessionPaused(true);
+                isInShift = false;
+            } else {
+                MovementResult result = currentFloor.moveForklift(input);
+                handleMovementResult(employee, result);
+            }
+
+            if (isInShift) {
+                System.out.println();
+            }
+        }
+    }
+
+    private void handleMovementResult(Employee employee, MovementResult result) {
+        switch (result) {
+            case MOVED:
+                break;
+
+            case WALL_HIT:
+                System.out.println("You hit a wall.");
+                employee.getShiftSummary().updateWallHits();
+                break;
+
+            case RESTRICTED_HIT:
+                System.out.println("You cannot enter restricted areas.");
+                employee.getShiftSummary().updateRestrictedAreaHits();
+                break;
+
+            case INVALID_INPUT:
+                System.out.println(Messages.INVALID_INPUT);
+                break;
+        }
+    }
+
+    private void resetAllForklifts() {
+        for (int floorNumber = 1; floorNumber <= warehouseMap.getFloorCount(); floorNumber++) {
+            warehouseMap.getFloorByNumber(floorNumber).resetForklift();
+        }
     }
     private void viewOwnPayslip(Employee employee) {
         ArrayList<Payslip> payslipSource;

@@ -86,4 +86,9 @@ public class Forklift {
     public void setSessionPaused(boolean sessionPaused) {
         this.sessionPaused = sessionPaused;
     }
+
+    public void moveTo(int row, int col) {
+        this.row = row;
+        this.col = col;
+    }
 }

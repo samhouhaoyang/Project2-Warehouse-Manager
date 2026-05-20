@@ -215,4 +215,6 @@ public final class Messages {
         System.out.print("Enter a floor number to navigate the warehouse or X to return to the main menu : ");
     }
 
+    public static final String SHIFT_ALREADY_IN_PROGRESS =
+            "A warehouse shift is already in progress. Please resume the last shift.";
 }

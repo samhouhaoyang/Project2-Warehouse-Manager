@@ -43,6 +43,9 @@ public class WarehouseManagerEngine {
     private String warehouseMapFilePath;
     private String employeesFilePath;
 
+    private boolean hasPausedShift;
+    private boolean shiftCompleted;
+
     public WarehouseManagerEngine() {
         employees = new ArrayList<>();
         loadedPayslips = new ArrayList<>();
@@ -335,14 +338,29 @@ public class WarehouseManagerEngine {
     }
 
     private void startWarehouseShift(Employee employee) {
-        activeFloorNumber = Constants.MIN_VALID_FLOOR_NUMBER;
+        if (hasPausedShift) {
+            System.out.println(Messages.SHIFT_ALREADY_IN_PROGRESS);
+            return;
+        }
+
         resetAllForklifts();
+
+        hasPausedShift = false;
+        shiftCompleted = false;
+
         runWarehouseShift(employee);
     }
 
     private void resumeWarehouseShift(Employee employee) {
+        if (!hasPausedShift) {
+            System.out.println(Messages.NO_SHIFT_TO_RESUME);
+            return;
+        }
+
+        shiftCompleted = false;
         runWarehouseShift(employee);
     }
+
     private void runWarehouseShift(Employee employee) {
         boolean selectingFloor = true;
 
@@ -354,6 +372,7 @@ public class WarehouseManagerEngine {
             String input = SCANNER.nextLine().trim();
 
             if (input.equalsIgnoreCase(Constants.TERMINATE)) {
+                hasPausedShift = !this.shiftCompleted;
                 selectingFloor = false;
             } else {
                 try {
@@ -365,10 +384,11 @@ public class WarehouseManagerEngine {
                         WarehouseFloor selectedFloor =
                                 warehouseMap.getFloorByNumber(selectedFloorNumber);
 
-                        boolean shiftCompleted =
+                        boolean completedNow =
                                 runFloorMovementLoop(employee, selectedFloor);
 
-                        if (shiftCompleted) {
+                        if (completedNow) {
+                            hasPausedShift = false;
                             selectingFloor = false;
                         }
                     }
@@ -385,9 +405,9 @@ public class WarehouseManagerEngine {
 
     private boolean runFloorMovementLoop(Employee employee, WarehouseFloor currentFloor) {
         boolean isInFloor = true;
-        boolean shiftCompleted = false;
+        boolean completedNow = false;
 
-        while (isInFloor && !shiftCompleted) {
+        while (isInFloor && !completedNow) {
             currentFloor.printFloor();
 
             Messages.printMovementOptions();
@@ -413,15 +433,19 @@ public class WarehouseManagerEngine {
 
             if (isShiftComplete()) {
                 System.out.println(Messages.SHIFT_COMPLETE);
-                shiftCompleted = true;
+                completedNow = true;
+                this.shiftCompleted = true;
+                hasPausedShift = false;
             }
 
-            if (isInFloor && !shiftCompleted) {
+            if (isInFloor && !completedNow) {
                 System.out.println();
             }
+
+
         }
 
-        return shiftCompleted;
+        return completedNow;
     }
 
 
@@ -473,7 +497,7 @@ public class WarehouseManagerEngine {
         Payslip payslip = findPayslipByEmployeeId(payslipSource, employee.getEmployeeId());
 
         if (payslip == null) {
-            System.out.println("Employee " + employee.getEmployeeId() + "'s payslip not found.");
+            Messages.printPayslipNotFound(employee.getEmployeeId());
             return;
         }
 

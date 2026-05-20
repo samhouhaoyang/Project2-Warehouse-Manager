@@ -8,8 +8,8 @@ import utils.Constants;
 import utils.Messages;
 
 /**
- * Represents one floor of the warehouse.
- * Each floor has its own 2D grid and its own forklift.
+ * Represents the forklift on a warehouse floor.
+ * It stores the forklift position, carried item, and session pause state.
  */
 public class WarehouseFloor {
 
@@ -165,7 +165,7 @@ public class WarehouseFloor {
     }
 
     public void markShelfVisitedAt(int row, int col) {
-        if (isInBounds(row, col)) {
+        if (isInBounds(row, col) && isShelfAt(row, col)) {
             visitedShelves[row][col] = true;
         }
     }
@@ -280,9 +280,13 @@ public class WarehouseFloor {
 
                     WarehouseCell cellSnapshot = getCellSnapshotAt(row, col);
 
-                    if (cellSnapshot != null
-                            && cellSnapshot.getShelf() != null
-                            && !cellSnapshot.getShelf().isEmpty()) {
+                    if (cellSnapshot == null) {
+                        return false;
+                    }
+
+                    Shelf shelf = cellSnapshot.getShelf();
+
+                    if (shelf != null && !shelf.isEmpty()) {
                         return false;
                     }
                 }

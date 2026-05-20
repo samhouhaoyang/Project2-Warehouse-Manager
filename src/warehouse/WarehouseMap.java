@@ -107,4 +107,16 @@ public class WarehouseMap {
 
         return true;
     }
+
+    public boolean areAllShelfItemsEmpty() {
+        for (int floorNumber = 1; floorNumber <= getFloorCount(); floorNumber++) {
+            WarehouseFloor floor = getFloorByNumber(floorNumber);
+
+            if (!floor.areAllShelfItemsEmpty()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

@@ -69,34 +69,6 @@ public class WarehouseManagerEngine {
         engine.exitProgram();
     }
 
-    private void testManagerMenu() {
-    }
-
-    private void testIoPackage(String[] args) {
-        String employeesFilePath;
-
-        // Temporary testing logic.
-        // Later, this must be replaced by strict command-line validation.
-        if (args.length >= 5) {
-            employeesFilePath = args[4];
-        } else {
-            employeesFilePath = "data/employees_1.csv";
-        }
-
-        readEmployees(employeesFilePath);
-        readPayslips();
-
-        System.out.println("Employees loaded: " + employees.size());
-        System.out.println("Payslips loaded: " + loadedPayslips.size());
-
-        PayrollManager payrollManager = findFirstPayrollManager();
-
-        if (payrollManager != null) {
-            runPayrollManagerMenu(payrollManager);
-        }
-        // Only uncomment this when you intentionally want to overwrite data/payslips.csv
-        //savePayslipsIfNeeded();
-    }
     private PayrollManager findFirstPayrollManager() {
         for (Employee employee : employees) {
             if (employee instanceof PayrollManager) {
@@ -112,7 +84,7 @@ public class WarehouseManagerEngine {
         try {
             employees = reader.readEmployees(path);
         } catch (FileNotFoundException e) {
-            System.out.println("Unable to process file. Exiting program.");
+            Messages.printFileProcessingError();
         }
     }
 
@@ -126,16 +98,26 @@ public class WarehouseManagerEngine {
 
 
     private void savePayslipsIfNeeded() {
-        if (!payslipsModified) {
+        ArrayList<Payslip> payslipsToSave;
+
+        if (hasGeneratedCurrentPayslips) {
+            payslipsToSave = currentPayslips;
+        } else {
+            payslipsToSave = loadedPayslips;
+        }
+
+        if (payslipsToSave.isEmpty()) {
+            Messages.printNoPayslipsToSave();
             return;
         }
 
         PayslipFileWriter writer = new PayslipFileWriter();
 
         try {
-            writer.writePayslips(currentPayslips);
+            Messages.printSavingPayslipsFile(Constants.PAYSLIPS_FILE_PATH);
+            writer.writePayslips(payslipsToSave);
         } catch (FileNotFoundException e) {
-            System.out.println("Unable to process file. Exiting program.");
+            Messages.printFileProcessingError();
         }
     }
 
@@ -192,13 +174,15 @@ public class WarehouseManagerEngine {
 
     private void loadFiles() {
         warehouseMap = new WarehouseMap(floors, rows, columns);
+        Messages.printProcessingWarehouseFile(warehouseMapFilePath);
         readWarehouseMap(warehouseMap);
         // below two line for testing only
         //Messages.printLegend();
         //warehouseMap.printMap();
 
-
+        Messages.printProcessingEmployeesFile(employeesFilePath);
         readEmployees(employeesFilePath);
+        Messages.printProcessingPayslipsFile(Constants.PAYSLIPS_FILE_PATH);
         readPayslips();
     }
 
@@ -229,10 +213,12 @@ public class WarehouseManagerEngine {
             }else{
                 Employee currEmployee = findEmployeeById(input);
 
-                if(findEmployeeById(input) == null){
+                if(currEmployee == null){
                     Messages.printEmployeeNotFound();
 
+
                 }else{
+                    System.out.println();
                     Messages.printEmployeeWelcome(currEmployee);
 
                     switch (currEmployee.getDesignation()){
@@ -324,9 +310,15 @@ public class WarehouseManagerEngine {
             PayrollManagerMenuOption option = fromInput(optionText);
 
             switch (option) {
-                case VIEW_ALL_EMPLOYEE_SHIFT -> viewAllEmployeeShiftSummary();
+                case VIEW_ALL_EMPLOYEE_SHIFT -> {
+                    System.out.println();
+                    viewAllEmployeeShiftSummary();
+                }
                 case GENERATE_PAYSLIPS -> generateCurrentPayslips();
-                case VIEW_ALL_PAYSLIPS ->  viewAllPayslips();
+                case VIEW_ALL_PAYSLIPS -> {
+                    System.out.println();
+                    viewAllPayslips();
+                }
                 case LOGOUT -> isRunning = false;
                 case INVALID -> System.out.println(Messages.INVALID_INPUT);
             }
@@ -338,20 +330,23 @@ public class WarehouseManagerEngine {
     }
 
     private void startWarehouseShift(Employee employee) {
-        if (hasPausedShift) {
-            System.out.println(Messages.SHIFT_ALREADY_IN_PROGRESS);
-            return;
-        }
-
         resetAllForklifts();
 
         hasPausedShift = false;
         shiftCompleted = false;
 
+        if (stopIfNoDeliverableWork()) {
+            return;
+        }
+
         runWarehouseShift(employee);
     }
 
     private void resumeWarehouseShift(Employee employee) {
+        if (stopIfNoDeliverableWork()) {
+            return;
+        }
+
         if (!hasPausedShift) {
             System.out.println(Messages.NO_SHIFT_TO_RESUME);
             return;
@@ -359,6 +354,18 @@ public class WarehouseManagerEngine {
 
         shiftCompleted = false;
         runWarehouseShift(employee);
+    }
+
+    private boolean stopIfNoDeliverableWork() {
+        if (warehouseMap.areAllShelfItemsEmpty()
+                && !warehouseMap.isAnyForkliftCarrying()) {
+            System.out.println(Messages.WAREHOUSE_ALL_SHELVES_EMPTY);
+            shiftCompleted = true;
+            hasPausedShift = false;
+            return true;
+        }
+
+        return false;
     }
 
     private void runWarehouseShift(Employee employee) {
@@ -396,10 +403,6 @@ public class WarehouseManagerEngine {
                     System.out.println(Messages.INVALID_FLOOR_SELECTION);
                 }
             }
-
-            if (selectingFloor) {
-                System.out.println();
-            }
         }
     }
 
@@ -408,7 +411,7 @@ public class WarehouseManagerEngine {
         boolean completedNow = false;
 
         while (isInFloor && !completedNow) {
-            currentFloor.printFloor();
+            currentFloor.printFloorWithoutHeader();
 
             Messages.printMovementOptions();
 
@@ -419,6 +422,7 @@ public class WarehouseManagerEngine {
                 case DELIVER -> deliverItemAtStart(employee, currentFloor);
 
                 case QUIT -> {
+                    System.out.println(Messages.SESSION_PAUSED);
                     currentFloor.getForklift().setSessionPaused(true);
                     isInFloor = false;
                 }
@@ -431,18 +435,17 @@ public class WarehouseManagerEngine {
                 case INVALID -> System.out.println(Messages.INVALID_INPUT);
             }
 
+            if (isFloorComplete(currentFloor)) {
+                System.out.println(Messages.FLOOR_ALL_SHELVES_EMPTY);
+                isInFloor = false;
+            }
+
             if (isShiftComplete()) {
-                System.out.println(Messages.SHIFT_COMPLETE);
+                System.out.println(Messages.WAREHOUSE_ALL_SHELVES_EMPTY);
                 completedNow = true;
                 this.shiftCompleted = true;
                 hasPausedShift = false;
             }
-
-            if (isInFloor && !completedNow) {
-                System.out.println();
-            }
-
-
         }
 
         return completedNow;
@@ -472,6 +475,7 @@ public class WarehouseManagerEngine {
 
         if (floor.isShelfAt(forklift.getRow(), forklift.getCol())) {
             floor.markShelfVisitedAt(forklift.getRow(), forklift.getCol());
+            floor.printFloorWithoutHeader();
             runShelfMenu(employee, floor);
         }
     }
@@ -519,34 +523,40 @@ public class WarehouseManagerEngine {
         reportees = supervisor.getReportees();
 
         if (reportees.isEmpty()) {
-            System.out.println("No reportees found.");
+            System.out.println(Messages.NO_REPORTEES_FOUND);
             return;
         }
 
-        for (Employee employee : reportees) {
-            System.out.printf(
-                    "Employee Id: %s, Employee Name: %s, Designation: %s%n",
+        for (int i = 0; i < reportees.size(); i++) {
+            Employee employee = reportees.get(i);
+            Messages.printEmployeeSummaryHeader(
                     employee.getEmployeeId(),
                     employee.getEmployeeName(),
                     employee.getDesignation()
             );
 
             employee.getShiftSummary().printSummary();
-            System.out.println();
+
+            if (i < reportees.size() - 1) {
+                System.out.println();
+            }
         }
 
     }
     private void viewAllEmployeeShiftSummary() {
-        for (Employee employee : employees) {
-            System.out.printf(
-                    "Employee Id: %s, Employee Name: %s, Designation: %s%n",
+        for (int i = 0; i < employees.size(); i++) {
+            Employee employee = employees.get(i);
+            Messages.printEmployeeSummaryHeader(
                     employee.getEmployeeId(),
                     employee.getEmployeeName(),
                     employee.getDesignation()
             );
 
             employee.getShiftSummary().printSummary();
-            System.out.println();
+
+            if (i < employees.size() - 1) {
+                System.out.println();
+            }
         }
 
     }
@@ -578,9 +588,9 @@ public class WarehouseManagerEngine {
     private void printPayslips(ArrayList<Payslip> payslips) {
         for (int i = 0; i < payslips.size(); i++) {
             payslips.get(i).printPayslip();
+            Messages.printBreakLine();
 
             if (i < payslips.size() - 1) {
-                Messages.printBreakLine();
                 System.out.println();
             }
         }
@@ -616,7 +626,10 @@ public class WarehouseManagerEngine {
                 case INVALID -> System.out.println(Messages.INVALID_INPUT);
             }
 
-            if (inShelfMenu) {
+            if (inShelfMenu
+                    && option != ShelfMenuOption.VIEW_ITEMS
+                    && option != ShelfMenuOption.PICK_ITEM
+                    && option != ShelfMenuOption.INVALID) {
                 System.out.println();
             }
         }
@@ -634,8 +647,6 @@ public class WarehouseManagerEngine {
             System.out.println(Messages.ALREADY_CARRYING);
             return;
         }
-
-        floor.printShelfItemsAt(forklift.getRow(), forklift.getCol());
 
         System.out.print(Messages.ENTER_ITEM_INDEX);
 
@@ -710,6 +721,11 @@ public class WarehouseManagerEngine {
     private boolean isShiftComplete() {
         return warehouseMap.areAllShelvesCompleted()
                 && !warehouseMap.isAnyForkliftCarrying();
+    }
+
+    private boolean isFloorComplete(WarehouseFloor floor) {
+        return floor.areAllShelvesCompleted()
+                && !floor.getForklift().isCarrying();
     }
 }
 

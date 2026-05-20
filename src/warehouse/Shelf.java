@@ -145,7 +145,7 @@ public class Shelf {
         }
 
         for (int i = 0; i < size; i++) {
-            System.out.printf("%d. %s%n", i + 1, items[i]);
+            Messages.printShelfItem(i + 1, items[i]);
         }
     }
 

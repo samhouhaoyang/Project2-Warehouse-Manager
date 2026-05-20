@@ -6,6 +6,7 @@ import employees.Payslip;
 import exceptions.IncorrectTypeException;
 import exceptions.InvalidLineException;
 import utils.Constants;
+import utils.Messages;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,6 +20,7 @@ public class PayslipFileReader {
         File file = new File(path);
 
         if (!file.exists()) {
+            Messages.printPayslipFileDoesNotExist(path);
             return payslips;
         }
 
@@ -47,7 +49,7 @@ public class PayslipFileReader {
             scanner.close();
 
         }catch (FileNotFoundException e){
-            System.out.println("Unable to process file. Exiting program.");
+            Messages.printFileProcessingError();
         }
 
         return payslips;
@@ -69,7 +71,7 @@ public class PayslipFileReader {
 
         if (lineArray.length != Constants.PAYSLIP_FIELD_COUNT) {
             throw new InvalidLineException(
-                    String.format("Incorrect Payslips line at line %d. Skipping this line.",
+                    String.format(Messages.INCORRECT_PAYSLIPS_LINE,
                             lineNumber)
             );
         }
@@ -79,7 +81,7 @@ public class PayslipFileReader {
 
         if (employeeId.isEmpty() || employeeName.isEmpty()) {
             throw new IncorrectTypeException(
-                    String.format("Incorrect Employee Details at line %d. Skipping this line.",
+                    String.format(Messages.INCORRECT_EMPLOYEE_DETAILS_SKIP_THIS_LINE,
                             lineNumber)
             );
         }
@@ -98,7 +100,7 @@ public class PayslipFileReader {
                 || reporteePay < 0
                 || netSalary <= 0) {
             throw new IncorrectTypeException(
-                    String.format("Incorrect Employee Salary details at line %d. Skipping this line.",
+                    String.format(Messages.INCORRECT_EMPLOYEE_SALARY_DETAILS,
                             lineNumber)
             );
         }

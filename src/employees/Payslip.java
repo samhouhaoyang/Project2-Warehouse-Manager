@@ -1,5 +1,7 @@
 package employees;
 
+import utils.Messages;
+
 public class Payslip{
     private final String employeeId;
     private final String employeeName;
@@ -55,14 +57,16 @@ public class Payslip{
     }
 
     public void printPayslip(){
-        System.out.printf("EmployeeID: %s%n", employeeId);
-        System.out.printf("Employee Name: %s%n", employeeName);
-        System.out.printf("Base salary: %.2f%n", baseSalary);
-        System.out.printf("Delivered Item Pay: %.2f%n", deliveredPay);
-        System.out.printf("Hits Penalty: %.2f%n", hitPenalty);
-        System.out.printf("Restricted Penalty: %.2f%n", restrictedPenalty);
-        System.out.printf("Reportees Management Pay: %.2f%n", reporteePay);
-        System.out.printf("Net Salary: %.2f%n", netSalary);
+        Messages.printPayslip(
+                employeeId,
+                employeeName,
+                baseSalary,
+                deliveredPay,
+                hitPenalty,
+                restrictedPenalty,
+                reporteePay,
+                netSalary
+        );
     }
 
     public String toFileLine(){

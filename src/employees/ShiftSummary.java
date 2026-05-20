@@ -1,5 +1,7 @@
 package employees;
 
+import utils.Messages;
+
 public class ShiftSummary {
     private int itemsDelivered;
     private int wallHits;
@@ -37,9 +39,7 @@ public class ShiftSummary {
     }
 
     public void printSummary(){
-        System.out.printf("No. of Items delivered: %d%n" +
-                "No. of Walls hit: %d%n" +
-                "No. of Restricted Areas hit: %d%n", itemsDelivered, wallHits, restrictedAreaHits);
+        Messages.printShiftSummary(itemsDelivered, wallHits, restrictedAreaHits);
     }
 
 

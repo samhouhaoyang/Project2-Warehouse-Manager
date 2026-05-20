@@ -198,15 +198,20 @@ public class WarehouseFloor {
      * The forklift position is displayed as F.
      */
     public void printFloor() {
-        System.out.printf("==========Floor: %d==========%n", floorNumber);
-        System.out.printf("Forklift at: (%d,%d)%n", forklift.getRow(), forklift.getCol());
+        Messages.printFloorHeader(floorNumber);
+        System.out.println();
+        printFloorWithoutHeader();
+    }
+
+    public void printFloorWithoutHeader() {
+        Messages.printForkliftPosition(forklift.getRow(), forklift.getCol());
 
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 if (forklift.getRow() == row && forklift.getCol() == col) {
-                    System.out.print("F ");
+                    Messages.printForkliftSymbol();
                 } else {
-                    System.out.print(grid[row][col].getSymbol() + " ");
+                    Messages.printMapCell(grid[row][col].getSymbol());
                 }
             }
 
@@ -278,6 +283,28 @@ public class WarehouseFloor {
                         return false;
                     }
 
+                    WarehouseCell cellSnapshot = getCellSnapshotAt(row, col);
+
+                    if (cellSnapshot == null) {
+                        return false;
+                    }
+
+                    Shelf shelf = cellSnapshot.getShelf();
+
+                    if (shelf != null && !shelf.isEmpty()) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public boolean areAllShelfItemsEmpty() {
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                if (isShelfAt(row, col)) {
                     WarehouseCell cellSnapshot = getCellSnapshotAt(row, col);
 
                     if (cellSnapshot == null) {

@@ -3,6 +3,7 @@ package io;
 import employees.*;
 import enums.DesignationType;
 import utils.Constants;
+import utils.Messages;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -75,10 +76,7 @@ public class EmployeeFileReader {
         String[] lineArray = line.split(Constants.CSV_DELIMITER, -1);
         // incorrect number of columns
         if (lineArray.length < Constants.EMPLOYEE_MIN_FIELD_COUNT) {
-            System.out.printf(
-                    "Incorrect Employees line at line %d. Skipping this line.%n",
-                    lineNumber
-            );
+            Messages.printEmployeeFileInvalidLine(lineNumber);
             return null;
         }
 
@@ -94,10 +92,7 @@ public class EmployeeFileReader {
         }
 
         if (employeeId.isEmpty() || employeeName.isEmpty()) {
-            System.out.printf(
-                    "Incorrect Employee Details at line %d. Skipping the line.%n",
-                    lineNumber
-            );
+            Messages.printEmployeeFileInvalidDetails(lineNumber);
             return null;
         }
 
@@ -106,18 +101,12 @@ public class EmployeeFileReader {
         try {
             baseSalary = Double.parseDouble(baseSalaryText);
         } catch (NumberFormatException e) {
-            System.out.printf(
-                    "Incorrect Employee Details at line %d. Skipping the line.%n",
-                    lineNumber
-            );
+            Messages.printEmployeeFileInvalidDetails(lineNumber);
             return null;
         }
 
         if (baseSalary <= 0) {
-            System.out.printf(
-                    "Incorrect Employee Details at line %d. Skipping the line.%n",
-                    lineNumber
-            );
+            Messages.printEmployeeFileInvalidDetails(lineNumber);
             return null;
         }
 
@@ -126,10 +115,7 @@ public class EmployeeFileReader {
         try {
             designation = DesignationType.valueOf(designationText);
         } catch (IllegalArgumentException e) {
-            System.out.printf(
-                    "Incorrect Employee Designation at line %d. Skipping this line.%n",
-                    lineNumber
-            );
+            Messages.printEmployeeFileInvalidDesignation(lineNumber);
             return null;
         }
 

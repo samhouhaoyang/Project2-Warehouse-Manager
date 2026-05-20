@@ -144,7 +144,7 @@ public class WarehouseManagerEngine {
     private void exitProgram(){
         //TODO: Write the payslips data at the end.
         savePayslipsIfNeeded();
-        System.out.println("Goodbye!");
+        System.out.println(Messages.GOODBYE);
 
     }
 

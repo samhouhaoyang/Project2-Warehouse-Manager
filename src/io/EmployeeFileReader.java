@@ -75,7 +75,8 @@ public class EmployeeFileReader {
     public Employee processLine(String line, int lineNumber){
         String[] lineArray = line.split(Constants.CSV_DELIMITER, -1);
         // incorrect number of columns
-        if (lineArray.length < Constants.EMPLOYEE_MIN_FIELD_COUNT) {
+        if (lineArray.length < Constants.EMPLOYEE_MIN_FIELD_COUNT
+                || lineArray.length > Constants.EMPLOYEE_MAX_FIELD_COUNT) {
             Messages.printEmployeeFileInvalidLine(lineNumber);
             return null;
         }
@@ -105,7 +106,7 @@ public class EmployeeFileReader {
             return null;
         }
 
-        if (baseSalary <= 0) {
+        if (baseSalary <= 0 || Double.isNaN(baseSalary) || Double.isInfinite(baseSalary)) {
             Messages.printEmployeeFileInvalidDetails(lineNumber);
             return null;
         }

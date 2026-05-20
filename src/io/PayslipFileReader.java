@@ -86,12 +86,12 @@ public class PayslipFileReader {
             );
         }
 
-        double baseSalary = Double.parseDouble(lineArray[2].trim());
-        double deliveredPay = Double.parseDouble(lineArray[3].trim());
-        double hitPenalty = Double.parseDouble(lineArray[4].trim());
-        double restrictedPenalty = Double.parseDouble(lineArray[5].trim());
-        double reporteePay = Double.parseDouble(lineArray[6].trim());
-        double netSalary = Double.parseDouble(lineArray[7].trim());
+        double baseSalary = parsePayslipAmount(lineArray[2], lineNumber);
+        double deliveredPay = parsePayslipAmount(lineArray[3], lineNumber);
+        double hitPenalty = parsePayslipAmount(lineArray[4], lineNumber);
+        double restrictedPenalty = parsePayslipAmount(lineArray[5], lineNumber);
+        double reporteePay = parsePayslipAmount(lineArray[6], lineNumber);
+        double netSalary = parsePayslipAmount(lineArray[7], lineNumber);
 
         if (baseSalary <= 0
                 || deliveredPay < 0
@@ -107,6 +107,25 @@ public class PayslipFileReader {
 
         return new Payslip(employeeId, employeeName, baseSalary,
                 deliveredPay, hitPenalty, restrictedPenalty, reporteePay, netSalary);
+    }
+
+    private double parsePayslipAmount(String amountText, int lineNumber)
+            throws IncorrectTypeException {
+
+        try {
+            double amount = Double.parseDouble(amountText.trim());
+
+            if (Double.isNaN(amount) || Double.isInfinite(amount)) {
+                throw new NumberFormatException();
+            }
+
+            return amount;
+        } catch (NumberFormatException e) {
+            throw new IncorrectTypeException(
+                    String.format(Messages.INCORRECT_EMPLOYEE_SALARY_DETAILS,
+                            lineNumber)
+            );
+        }
     }
 
 

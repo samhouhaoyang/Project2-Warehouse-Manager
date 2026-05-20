@@ -106,6 +106,8 @@ public class WarehouseManagerEngine {
             payslipsToSave = loadedPayslips;
         }
 
+        payslipsToSave = filterPayslipsForCurrentEmployees(payslipsToSave);
+
         if (payslipsToSave.isEmpty()) {
             Messages.printNoPayslipsToSave();
             return;
@@ -575,16 +577,37 @@ public class WarehouseManagerEngine {
     }
 
     private void viewAllPayslips(){
+        ArrayList<Payslip> payslipsToPrint;
+
         if (hasGeneratedCurrentPayslips) {
-            printPayslips(currentPayslips);
+            payslipsToPrint = filterPayslipsForCurrentEmployees(currentPayslips);
         }else if (!loadedPayslips.isEmpty()) {
-            printPayslips(loadedPayslips);
+            payslipsToPrint = filterPayslipsForCurrentEmployees(loadedPayslips);
         }else{
             Messages.printPaySlipNotGenerated();
+            return;
         }
 
+        if (payslipsToPrint.isEmpty()) {
+            Messages.printPaySlipNotGenerated();
+            return;
+        }
 
+        printPayslips(payslipsToPrint);
     }
+
+    private ArrayList<Payslip> filterPayslipsForCurrentEmployees(ArrayList<Payslip> payslips) {
+        ArrayList<Payslip> filteredPayslips = new ArrayList<>();
+
+        for (Payslip payslip : payslips) {
+            if (findEmployeeById(payslip.getEmployeeId()) != null) {
+                filteredPayslips.add(payslip);
+            }
+        }
+
+        return filteredPayslips;
+    }
+
     private void printPayslips(ArrayList<Payslip> payslips) {
         for (int i = 0; i < payslips.size(); i++) {
             payslips.get(i).printPayslip();

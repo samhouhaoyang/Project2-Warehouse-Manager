@@ -207,4 +207,12 @@ public final class Messages {
     public static void printPaySlipGenerated() {
         System.out.println("Payslips generated successfully.");
     }
+
+    public static final String INVALID_FLOOR_SELECTION =
+            "Invalid Input";
+
+    public static void printFloorSelectionPrompt() {
+        System.out.print("Enter a floor number to navigate the warehouse or X to return to the main menu : ");
+    }
+
 }

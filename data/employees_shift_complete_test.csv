@@ -1,0 +1,3 @@
+employee_id,employee_name,designation,base_salary,manager
+E001,Test Operator,OPERATOR,1000,
+E003,Test Payroll,PAYROLL_MANAGER,3000,

@@ -263,6 +263,34 @@ public class WarehouseFloor {
 
         shelf.printItems();
     }
+
+    /**
+     * Checks whether all shelves on this floor have been visited
+     * and all items on those shelves have been removed.
+     *
+     * @return true if every shelf on this floor is visited and empty
+     */
+    public boolean areAllShelvesCompleted() {
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                if (isShelfAt(row, col)) {
+                    if (!isShelfVisitedAt(row, col)) {
+                        return false;
+                    }
+
+                    WarehouseCell cellSnapshot = getCellSnapshotAt(row, col);
+
+                    if (cellSnapshot != null
+                            && cellSnapshot.getShelf() != null
+                            && !cellSnapshot.getShelf().isEmpty()) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
 }
 
 

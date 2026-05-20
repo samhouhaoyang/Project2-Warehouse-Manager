@@ -343,17 +343,53 @@ public class WarehouseManagerEngine {
     private void resumeWarehouseShift(Employee employee) {
         runWarehouseShift(employee);
     }
-
     private void runWarehouseShift(Employee employee) {
-        boolean isInShift = true;
+        boolean selectingFloor = true;
 
-        while (isInShift) {
-            WarehouseFloor currentFloor = warehouseMap.getFloorByNumber(activeFloorNumber);
-
+        while (selectingFloor) {
             Messages.printLegend();
             warehouseMap.printMap();
 
-            System.out.println();
+            Messages.printFloorSelectionPrompt();
+            String input = SCANNER.nextLine().trim();
+
+            if (input.equalsIgnoreCase(Constants.TERMINATE)) {
+                selectingFloor = false;
+            } else {
+                try {
+                    int selectedFloorNumber = Integer.parseInt(input);
+
+                    if (!warehouseMap.isValidFloorNumber(selectedFloorNumber)) {
+                        System.out.println(Messages.INVALID_FLOOR_SELECTION);
+                    } else {
+                        WarehouseFloor selectedFloor =
+                                warehouseMap.getFloorByNumber(selectedFloorNumber);
+
+                        boolean shiftCompleted =
+                                runFloorMovementLoop(employee, selectedFloor);
+
+                        if (shiftCompleted) {
+                            selectingFloor = false;
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println(Messages.INVALID_FLOOR_SELECTION);
+                }
+            }
+
+            if (selectingFloor) {
+                System.out.println();
+            }
+        }
+    }
+
+    private boolean runFloorMovementLoop(Employee employee, WarehouseFloor currentFloor) {
+        boolean isInFloor = true;
+        boolean shiftCompleted = false;
+
+        while (isInFloor && !shiftCompleted) {
+            currentFloor.printFloor();
+
             Messages.printMovementOptions();
 
             String input = SCANNER.nextLine();
@@ -364,7 +400,7 @@ public class WarehouseManagerEngine {
 
                 case QUIT -> {
                     currentFloor.getForklift().setSessionPaused(true);
-                    isInShift = false;
+                    isInFloor = false;
                 }
 
                 case UP, DOWN, LEFT, RIGHT -> {
@@ -375,11 +411,19 @@ public class WarehouseManagerEngine {
                 case INVALID -> System.out.println(Messages.INVALID_INPUT);
             }
 
-            if (isInShift) {
+            if (isShiftComplete()) {
+                System.out.println(Messages.SHIFT_COMPLETE);
+                shiftCompleted = true;
+            }
+
+            if (isInFloor && !shiftCompleted) {
                 System.out.println();
             }
         }
+
+        return shiftCompleted;
     }
+
 
     private void handleMovementResult(Employee employee, WarehouseFloor floor,
                                       MovementResult result) {
@@ -631,5 +675,17 @@ public class WarehouseManagerEngine {
         System.out.println(Messages.ITEM_DELIVERED);
     }
 
+    /**
+     * Checks whether the warehouse shift is complete.
+     *
+     * A shift is complete when all shelves in all floors are visited and empty,
+     * and no forklift is carrying any item.
+     *
+     * @return true if the whole warehouse shift is complete
+     */
+    private boolean isShiftComplete() {
+        return warehouseMap.areAllShelvesCompleted()
+                && !warehouseMap.isAnyForkliftCarrying();
+    }
 }
 

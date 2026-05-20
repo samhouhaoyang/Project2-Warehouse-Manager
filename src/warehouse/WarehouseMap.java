@@ -72,4 +72,39 @@ public class WarehouseMap {
             floor.printFloor();
         }
     }
+
+
+    /**
+     * Checks whether any forklift in the warehouse is currently carrying an item.
+     *
+     * @return true if any forklift is carrying an item
+     */
+    public boolean isAnyForkliftCarrying() {
+        for (int floorNumber = 1; floorNumber <= getFloorCount(); floorNumber++) {
+            WarehouseFloor floor = getFloorByNumber(floorNumber);
+
+            if (floor.getForklift().isCarrying()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks whether all shelves on all floors have been completed.
+     *
+     * @return true if every shelf in the warehouse is visited and empty
+     */
+    public boolean areAllShelvesCompleted() {
+        for (int floorNumber = 1; floorNumber <= getFloorCount(); floorNumber++) {
+            WarehouseFloor floor = getFloorByNumber(floorNumber);
+
+            if (!floor.areAllShelvesCompleted()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

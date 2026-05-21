@@ -122,7 +122,10 @@ public final class Constants {
     public static final String FILE_CELL_TYPE_RESTRICTED = "RESTRICTED";
 
     /** Header written to the payslip file. */
-    public static final String PAYSLIPS_HEADER = "employee_id,employee_name,base_pay,delivered_item_pay,hits_penalty,restricted_area_penalty,reportees_managing_pay,net_salary";
+    public static final String PAYSLIPS_HEADER =
+            "employee_id,employee_name,base_pay,delivered_item_pay,"
+                    + "hits_penalty,restricted_area_penalty,"
+                    + "reportees_managing_pay,net_salary";
 
     /** CSV row format used when saving one payslip. */
     public static final String PAYSLIP_FILE_LINE_FORMAT =

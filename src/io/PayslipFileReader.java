@@ -2,7 +2,6 @@ package io;
 
 import employees.Payslip;
 
-
 import exceptions.IncorrectTypeException;
 import exceptions.InvalidLineException;
 import utils.Constants;
@@ -16,7 +15,7 @@ import java.util.Scanner;
 /**
  * Reads persisted payslip records from the payslip CSV file.
  */
-public class PayslipFileReader {
+public class PayslipFileReader implements CsvFileReader<Payslip> {
     private String header = Constants.PAYSLIPS_HEADER;
 
     /**
@@ -32,7 +31,8 @@ public class PayslipFileReader {
      * @param path payslip file path
      * @return valid payslip records
      */
-    public ArrayList<Payslip> readPayslips(String path) {
+    @Override
+    public ArrayList<Payslip> read(String path) {
         ArrayList<Payslip> payslips = new ArrayList<>();
         File file = new File(path);
 
@@ -48,7 +48,6 @@ public class PayslipFileReader {
                 String line = scanner.nextLine();
                 lineNumber++;
 
-                // this handles header line
                 if (lineNumber == 1) {
                     header = line;
                     continue;
@@ -74,6 +73,17 @@ public class PayslipFileReader {
     }
 
     /**
+     * Reads payslip records from a file if it exists.
+     * Kept as a descriptive wrapper for engine code readability.
+     *
+     * @param path payslip file path
+     * @return valid payslip records
+     */
+    public ArrayList<Payslip> readPayslips(String path) {
+        return read(path);
+    }
+
+    /**
      * Returns the header read from the payslip file, or the default header
      * when the file does not exist.
      *
@@ -92,7 +102,7 @@ public class PayslipFileReader {
      * @throws IncorrectTypeException if employee or salary details are invalid
      * @throws InvalidLineException if the line has an invalid number of fields
      */
-    public Payslip processLine(String line, int lineNumber)
+    private Payslip processLine(String line, int lineNumber)
             throws IncorrectTypeException, InvalidLineException {
 
         String[] lineArray = line.split(Constants.CSV_DELIMITER, -1);
@@ -136,9 +146,4 @@ public class PayslipFileReader {
         return new Payslip(employeeId, employeeName, baseSalary,
                 deliveredPay, hitPenalty, restrictedPenalty, reporteePay, netSalary);
     }
-
-
-
-
-
 }

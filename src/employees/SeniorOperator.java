@@ -6,7 +6,7 @@ import enums.DesignationType;
  * Represents a senior operator with the same permissions as an operator
  * but a different base salary.
  */
-public class SeniorOperator extends Employee implements WarehouseWorker{
+public class SeniorOperator extends Employee implements WarehouseWorker {
 
     /**
      * Creates a senior operator.
@@ -16,9 +16,8 @@ public class SeniorOperator extends Employee implements WarehouseWorker{
      * @param designation senior operator designation
      * @param baseSalary base salary
      */
-    public SeniorOperator(String employeeId, String employeeName, DesignationType designation, double baseSalary) {
+    public SeniorOperator(String employeeId, String employeeName,
+                          DesignationType designation, double baseSalary) {
         super(employeeId, employeeName, designation, baseSalary);
     }
-
-
 }

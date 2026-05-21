@@ -1,6 +1,10 @@
 package io;
 
-import employees.*;
+import employees.Employee;
+import employees.Operator;
+import employees.PayrollManager;
+import employees.SeniorOperator;
+import employees.Supervisor;
 import enums.DesignationType;
 import utils.Constants;
 import utils.Messages;
@@ -13,13 +17,13 @@ import java.util.Scanner;
 /**
  * Reads employee data from a CSV file and builds employee objects.
  */
-public class EmployeeFileReader {
+public class EmployeeFileReader implements CsvFileReader<Employee> {
     private final ArrayList<String> managerIds;
 
     /**
      * Creates an employee file reader.
      */
-    public EmployeeFileReader(){
+    public EmployeeFileReader() {
         this.managerIds = new ArrayList<>();
     }
 
@@ -31,7 +35,8 @@ public class EmployeeFileReader {
      * @return employees loaded from valid lines
      * @throws FileNotFoundException if the file cannot be opened
      */
-    public ArrayList<Employee> readEmployees(String path) throws FileNotFoundException {
+    @Override
+    public ArrayList<Employee> read(String path) throws FileNotFoundException {
         managerIds.clear();
 
         ArrayList<Employee> employees = new ArrayList<>();
@@ -58,16 +63,42 @@ public class EmployeeFileReader {
 
         return employees;
     }
-    private Employee findEmployeeById(ArrayList<Employee> employees, String id){
+
+    /**
+     * Reads employees from the supplied CSV file path.
+     * Kept as a descriptive wrapper for engine code readability.
+     *
+     * @param path employee file path
+     * @return employees loaded from valid lines
+     * @throws FileNotFoundException if the file cannot be opened
+     */
+    public ArrayList<Employee> readEmployees(String path) throws FileNotFoundException {
+        return read(path);
+    }
+
+    /**
+     * Finds an employee in the newly loaded employee list.
+     *
+     * @param employees loaded employees
+     * @param id employee id to match
+     * @return matching employee, or null if none exists
+     */
+    private Employee findEmployeeById(ArrayList<Employee> employees, String id) {
         for (Employee employee : employees) {
-            if(employee.getEmployeeId().equals(id)){
+            if (employee.getEmployeeId().equals(id)) {
                 return employee;
             }
         }
+
         return null;
     }
 
-    private void linkSupervisor(ArrayList<Employee> employees){
+    /**
+     * Links employees to valid supervisor managers after all employees are loaded.
+     *
+     * @param employees loaded employees
+     */
+    private void linkSupervisor(ArrayList<Employee> employees) {
         for (int i = 0; i < employees.size(); i++) {
             Employee employee = employees.get(i);
             String managerId = managerIds.get(i);
@@ -84,7 +115,14 @@ public class EmployeeFileReader {
         }
     }
 
-    private Employee processLine(String line, int lineNumber){
+    /**
+     * Parses one employee CSV line.
+     *
+     * @param line raw CSV line
+     * @param lineNumber physical file line number
+     * @return created employee, or null when the line is invalid
+     */
+    private Employee processLine(String line, int lineNumber) {
         String[] lineArray = line.split(Constants.CSV_DELIMITER, -1);
 
         if (lineArray.length < Constants.EMPLOYEE_MIN_FIELD_COUNT) {
@@ -133,16 +171,24 @@ public class EmployeeFileReader {
         Employee employee = createEmployee(employeeId, employeeName, designation, baseSalary);
 
         if (employee != null) {
-            // note here default is a blank string
             managerIds.add(managerId);
         }
 
         return employee;
     }
 
+    /**
+     * Creates the concrete employee subtype for a designation.
+     *
+     * @param employeeId employee id
+     * @param employeeName employee name
+     * @param designation employee designation
+     * @param baseSalary base salary
+     * @return concrete employee instance
+     */
     private Employee createEmployee(String employeeId, String employeeName,
-                                    DesignationType designation, double baseSalary){
-        switch (designation){
+                                    DesignationType designation, double baseSalary) {
+        switch (designation) {
             case OPERATOR -> {
                 return new Operator(employeeId, employeeName, designation, baseSalary);
             }
@@ -156,7 +202,7 @@ public class EmployeeFileReader {
                 return new PayrollManager(employeeId, employeeName, designation, baseSalary);
             }
             default -> {
-                return  null;
+                return null;
             }
         }
     }

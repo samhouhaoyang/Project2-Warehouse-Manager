@@ -41,7 +41,8 @@ public class WarehouseMap {
      * @return true if the floor number is valid, false otherwise
      */
     public boolean isValidFloorNumber(int floorNumber) {
-        return floorNumber >= Constants.MIN_VALID_FLOOR_NUMBER && floorNumber <= warehouseFloors.length;
+        return floorNumber >= Constants.MIN_VALID_FLOOR_NUMBER
+                && floorNumber <= warehouseFloors.length;
     }
 
     /**

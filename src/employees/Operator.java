@@ -5,7 +5,7 @@ import enums.DesignationType;
 /**
  * Represents a standard warehouse operator.
  */
-public class Operator extends Employee implements WarehouseWorker{
+public class Operator extends Employee implements WarehouseWorker {
 
     /**
      * Creates an operator.
@@ -15,9 +15,8 @@ public class Operator extends Employee implements WarehouseWorker{
      * @param designation operator designation
      * @param baseSalary base salary
      */
-    public Operator(String employeeId, String employeeName, DesignationType designation, double baseSalary) {
+    public Operator(String employeeId, String employeeName,
+                    DesignationType designation, double baseSalary) {
         super(employeeId, employeeName, designation, baseSalary);
     }
-
-
 }

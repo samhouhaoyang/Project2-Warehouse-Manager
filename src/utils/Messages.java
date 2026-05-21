@@ -20,7 +20,9 @@ public final class Messages {
 
     /** Error printed when the command-line argument count is wrong. */
     public static final String INVALID_ARGS_USAGE =
-            "Invalid number of Command Line Arguments. Usage: java WarehouseManagerEngine <floors> <rows> <cols> <master file> <employees file>.";
+            "Invalid number of Command Line Arguments. Usage: "
+                    + "java WarehouseManagerEngine <floors> <rows> <cols> "
+                    + "<master file> <employees file>.";
 
     /** Error printed when numeric command-line arguments are not integers. */
     public static final String INVALID_ARGS_INTEGERS =
@@ -194,7 +196,8 @@ public final class Messages {
 
     /** Message printed when all warehouse shelves are empty. */
     public static final String WAREHOUSE_ALL_SHELVES_EMPTY =
-            "All shelves in the warehouse are empty and nothing to deliver. Returning to main menu.";
+            "All shelves in the warehouse are empty and nothing to deliver. "
+                    + "Returning to main menu.";
 
     /** Message printed when there is no payslip data to save. */
     public static final String NO_PAYSLIPS_TO_SAVE =
@@ -475,7 +478,9 @@ public final class Messages {
      * Prints the warehouse map legend.
      */
     public static void printLegend() {
-        System.out.println("Legend: # Wall | . Aisle | X Restricted | S Shelf | O Start | F Forklift");
+        System.out.println(
+                "Legend: # Wall | . Aisle | X Restricted | S Shelf | O Start | F Forklift"
+        );
     }
 
     /**
@@ -651,7 +656,9 @@ public final class Messages {
      * Prints the floor selection prompt.
      */
     public static void printFloorSelectionPrompt() {
-        System.out.print("Enter a floor number to navigate the warehouse or X to return to the main menu : ");
+        System.out.print(
+                "Enter a floor number to navigate the warehouse or X to return to the main menu : "
+        );
     }
 
     /**

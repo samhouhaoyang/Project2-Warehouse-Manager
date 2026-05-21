@@ -40,21 +40,7 @@ public class WarehouseFloor {
         initialiseCells();
     }
 
-    /**
-     * Initialises the floor grid.
-     * Boundary cells are walls. Inner cells are aisles.
-     */
-    private void initialiseCells() {
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
-                if (isBoundary(row, col)) {
-                    grid[row][col] = new WarehouseCell(row, col, CellType.WALL);
-                } else {
-                    grid[row][col] = new WarehouseCell(row, col, CellType.AISLE);
-                }
-            }
-        }
-    }
+
 
     /**
      * Marks the fixed start cell after warehouse file data has been loaded.
@@ -485,6 +471,22 @@ public class WarehouseFloor {
         }
 
         return true;
+    }
+
+    /**
+     * Initialises the floor grid.
+     * Boundary cells are walls. Inner cells are aisles.
+     */
+    private void initialiseCells() {
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                if (isBoundary(row, col)) {
+                    grid[row][col] = new WarehouseCell(row, col, CellType.WALL);
+                } else {
+                    grid[row][col] = new WarehouseCell(row, col, CellType.AISLE);
+                }
+            }
+        }
     }
 }
 

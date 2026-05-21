@@ -245,7 +245,8 @@ public class WarehouseManagerEngine {
 
                     switch (currEmployee.getDesignation()) {
                         case OPERATOR, SENIOR_OPERATOR -> runOperatorMenu(currEmployee);
-                        case PAYROLL_MANAGER -> runPayrollManagerMenu((PayrollManager) currEmployee);
+                        case PAYROLL_MANAGER ->
+                                runPayrollManagerMenu((PayrollManager) currEmployee);
                         case SUPERVISOR -> runSupervisorMenu((Supervisor) currEmployee);
                         default -> System.out.println(Messages.INVALID_INPUT);
                     }

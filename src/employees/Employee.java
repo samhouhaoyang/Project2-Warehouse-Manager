@@ -25,7 +25,8 @@ public abstract class Employee {
      * @param designation employee designation
      * @param baseSalary base salary used for payslip calculation
      */
-    public Employee(String employeeId, String employeeName, DesignationType designation, double baseSalary) {
+    public Employee(String employeeId, String employeeName,
+                    DesignationType designation, double baseSalary) {
         this.employeeId = employeeId;
         this.employeeName = employeeName;
         this.designation = designation;

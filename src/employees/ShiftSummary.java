@@ -1,7 +1,7 @@
 package employees;
 
-import utils.Messages;
 import utils.Constants;
+import utils.Messages;
 
 /**
  * Stores the movement summary used for employee reports and payslips.
@@ -18,7 +18,6 @@ public class ShiftSummary {
         this.itemsDelivered = Constants.COUNTER_INITIAL_VALUE;
         this.wallHits = Constants.COUNTER_INITIAL_VALUE;
         this.restrictedAreaHits = Constants.COUNTER_INITIAL_VALUE;
-
     }
 
     /**
@@ -51,30 +50,28 @@ public class ShiftSummary {
     /**
      * Records one delivered item.
      */
-    public void updateItemDelivered(){
+    public void updateItemDelivered() {
         this.itemsDelivered += Constants.COUNTER_INCREMENT;
     }
 
     /**
      * Records one wall hit.
      */
-    public void updateWallHits(){
+    public void updateWallHits() {
         this.wallHits += Constants.COUNTER_INCREMENT;
     }
 
     /**
      * Records one restricted area hit.
      */
-    public void updateRestrictedAreaHits(){
+    public void updateRestrictedAreaHits() {
         this.restrictedAreaHits += Constants.COUNTER_INCREMENT;
     }
 
     /**
      * Prints this summary in the assignment output format.
      */
-    public void printSummary(){
+    public void printSummary() {
         Messages.printShiftSummary(itemsDelivered, wallHits, restrictedAreaHits);
     }
-
-
-}
+    }

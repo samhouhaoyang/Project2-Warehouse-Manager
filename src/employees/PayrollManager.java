@@ -8,7 +8,7 @@ import utils.Constants;
  * Payroll managers generate and view payslips, and their own payslip uses
  * base salary only.
  */
-public class PayrollManager extends Employee{
+public class PayrollManager extends Employee {
     /**
      * Creates a payroll manager.
      *
@@ -17,11 +17,10 @@ public class PayrollManager extends Employee{
      * @param designation payroll manager designation
      * @param baseSalary base salary
      */
-    public PayrollManager(String employeeId, String employeeName, DesignationType designation, double baseSalary) {
+    public PayrollManager(String employeeId, String employeeName,
+                          DesignationType designation, double baseSalary) {
         super(employeeId, employeeName, designation, baseSalary);
     }
-
-
 
     /**
      * Generates a payroll manager payslip using base salary only.
@@ -29,7 +28,7 @@ public class PayrollManager extends Employee{
      * @return generated payslip
      */
     @Override
-    public Payslip generatePayslip(){
+    public Payslip generatePayslip() {
         return new Payslip(
                 this,
                 Constants.ZERO_MONEY_AMOUNT,

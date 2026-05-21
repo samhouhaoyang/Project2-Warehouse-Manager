@@ -2,12 +2,13 @@ package employees;
 
 import enums.DesignationType;
 import utils.Constants;
+
 import java.util.ArrayList;
 
 /**
  * Represents a supervisor who can operate the warehouse and manage reportees.
  */
-public class Supervisor extends Employee implements WarehouseWorker{
+public class Supervisor extends Employee implements WarehouseWorker {
     private final ArrayList<Employee> reportees;
 
     /**
@@ -18,7 +19,8 @@ public class Supervisor extends Employee implements WarehouseWorker{
      * @param designation supervisor designation
      * @param baseSalary base salary
      */
-    public Supervisor(String employeeId, String employeeName, DesignationType designation, double baseSalary) {
+    public Supervisor(String employeeId, String employeeName,
+                      DesignationType designation, double baseSalary) {
         super(employeeId, employeeName, designation, baseSalary);
         this.reportees = new ArrayList<>();
     }
@@ -28,7 +30,7 @@ public class Supervisor extends Employee implements WarehouseWorker{
      *
      * @param employee reportee to add
      */
-    public void addReportee(Employee employee){
+    public void addReportee(Employee employee) {
         reportees.add(employee);
     }
 
@@ -46,20 +48,17 @@ public class Supervisor extends Employee implements WarehouseWorker{
      *
      * @return reportee count
      */
-    public int getReporteeCount(){
+    public int getReporteeCount() {
         return reportees.size();
     }
-
 
     /**
      * Calculates management pay from the number of reportees.
      *
      * @return reportee management pay
-     */
+    */
     @Override
-    public double getReporteeManagementPay(){
+    public double getReporteeManagementPay() {
         return getReporteeCount() * Constants.REPORTEE_MANAGEMENT_PAY;
     }
-
-
 }

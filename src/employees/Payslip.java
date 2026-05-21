@@ -1,12 +1,12 @@
 package employees;
 
-import utils.Messages;
 import utils.Constants;
+import utils.Messages;
 
 /**
  * Represents a generated or loaded payslip record.
  */
-public class Payslip{
+public class Payslip {
     private final String employeeId;
     private final String employeeName;
     private final double baseSalary;
@@ -28,7 +28,8 @@ public class Payslip{
      * @param reporteePay reportee management pay
      * @param netSalary final net salary
      */
-    public Payslip(String employeeId, String employeeName, double baseSalary, double deliveredPay, double hitPenalty,
+    public Payslip(String employeeId, String employeeName,
+                   double baseSalary, double deliveredPay, double hitPenalty,
                    double restrictedPenalty, double reporteePay, double netSalary) {
         this.employeeId = employeeId;
         this.employeeName = employeeName;
@@ -137,7 +138,7 @@ public class Payslip{
     /**
      * Prints this payslip in the assignment output format.
      */
-    public void printPayslip(){
+    public void printPayslip() {
         Messages.printPayslip(
                 employeeId,
                 employeeName,
@@ -155,7 +156,7 @@ public class Payslip{
      *
      * @return CSV row for file persistence
      */
-    public String toFileLine(){
+    public String toFileLine() {
         return String.format(Constants.PAYSLIP_FILE_LINE_FORMAT,
                 employeeId,
                 employeeName,

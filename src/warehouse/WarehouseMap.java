@@ -60,6 +60,9 @@ public class WarehouseMap {
         return warehouseFloors[floorNumber - 1];
     }
 
+    /**
+     * Marks the start cell on every floor after warehouse file data is loaded.
+     */
     public void markStartCells() {
         for (WarehouseFloor floor : warehouseFloors) {
             floor.markStartCell();
@@ -114,6 +117,11 @@ public class WarehouseMap {
         return true;
     }
 
+    /**
+     * Checks whether every shelf on every floor currently has no items.
+     *
+     * @return true if all shelf items have been removed
+     */
     public boolean areAllShelfItemsEmpty() {
         for (int floorNumber = 1; floorNumber <= getFloorCount(); floorNumber++) {
             WarehouseFloor floor = getFloorByNumber(floorNumber);

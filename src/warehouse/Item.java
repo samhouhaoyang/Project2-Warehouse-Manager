@@ -17,7 +17,8 @@ public class Item {
     }
 
     /**
-     * Copy constructor for Item
+     * Copy constructor for Item.
+     *
      * @param item Item object to copy from
      */
     public Item(Item item) {
@@ -28,10 +29,20 @@ public class Item {
         }
     }
 
+    /**
+     * Returns the item name.
+     *
+     * @return item name
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * Returns the display name for this item.
+     *
+     * @return item name
+     */
     @Override
     public String toString() {
         return this.name;

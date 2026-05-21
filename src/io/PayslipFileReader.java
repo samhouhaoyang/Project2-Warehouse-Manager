@@ -13,9 +13,25 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Reads persisted payslip records from the payslip CSV file.
+ */
 public class PayslipFileReader {
     private String header = Constants.PAYSLIPS_HEADER;
 
+    /**
+     * Creates a payslip file reader.
+     */
+    public PayslipFileReader() {
+    }
+
+    /**
+     * Reads payslip records from a file if it exists.
+     * Missing payslip files are non-fatal and return an empty list.
+     *
+     * @param path payslip file path
+     * @return valid payslip records
+     */
     public ArrayList<Payslip> readPayslips(String path) {
         ArrayList<Payslip> payslips = new ArrayList<>();
         File file = new File(path);
@@ -57,10 +73,25 @@ public class PayslipFileReader {
         return payslips;
     }
 
+    /**
+     * Returns the header read from the payslip file, or the default header
+     * when the file does not exist.
+     *
+     * @return payslip CSV header
+     */
     public String getHeader() {
         return header;
     }
 
+    /**
+     * Converts a CSV data line into a payslip.
+     *
+     * @param line CSV data line
+     * @param lineNumber physical line number in the file
+     * @return parsed payslip
+     * @throws IncorrectTypeException if employee or salary details are invalid
+     * @throws InvalidLineException if the line has an invalid number of fields
+     */
     public Payslip processLine(String line, int lineNumber)
             throws IncorrectTypeException, InvalidLineException {
 

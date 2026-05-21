@@ -45,14 +45,29 @@ public class WarehouseCell {
         }
     }
 
+    /**
+     * Returns the row index of this cell.
+     *
+     * @return row index
+     */
     public int getRow() {
         return row;
     }
 
+    /**
+     * Returns the column index of this cell.
+     *
+     * @return column index
+     */
     public int getCol() {
         return col;
     }
 
+    /**
+     * Returns the cell type.
+     *
+     * @return cell type
+     */
     public CellType getType() {
         return type;
     }
@@ -71,26 +86,56 @@ public class WarehouseCell {
         }
     }
 
+    /**
+     * Checks whether this cell is a wall.
+     *
+     * @return true if this cell is a wall
+     */
     public boolean isWall() {
         return type == CellType.WALL;
     }
 
+    /**
+     * Checks whether this cell is an aisle.
+     *
+     * @return true if this cell is an aisle
+     */
     public boolean isAisle() {
         return type == CellType.AISLE;
     }
 
+    /**
+     * Checks whether this cell is restricted.
+     *
+     * @return true if this cell is restricted
+     */
     public boolean isRestricted() {
         return type == CellType.RESTRICTED;
     }
 
+    /**
+     * Checks whether this cell is a shelf cell.
+     *
+     * @return true if this cell is a shelf
+     */
     public boolean isShelfCell() {
         return type == CellType.SHELF;
     }
 
+    /**
+     * Checks whether this cell is the start cell.
+     *
+     * @return true if this cell is START
+     */
     public boolean isStart() {
         return type == CellType.START;
     }
 
+    /**
+     * Checks whether a shelf object is attached to this cell.
+     *
+     * @return true if a shelf is attached
+     */
     public boolean hasShelf() {
         return shelf != null;
     }

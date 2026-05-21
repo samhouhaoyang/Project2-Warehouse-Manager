@@ -6,9 +6,16 @@ import utils.Constants;
  * Represents menu options available while standing on a shelf.
  */
 public enum ShelfMenuOption {
+    /** Show items on the current shelf. */
     VIEW_ITEMS,
+
+    /** Pick an item from the current shelf. */
     PICK_ITEM,
+
+    /** Leave the shelf menu. */
     QUIT,
+
+    /** Represents an unrecognised shelf menu option. */
     INVALID;
 
     /**

@@ -6,11 +6,22 @@ import utils.Constants;
  * Represents menu options available to operators and senior operators.
  */
 public enum OperatorMenuOption {
+    /** Start or resume warehouse navigation from the operator menu. */
     START_SHIFT,
+
+    /** Resume a previously started warehouse shift. */
     RESUME_SHIFT,
+
+    /** Show the current employee shift summary. */
     VIEW_SHIFT_SUMMARY,
+
+    /** Show the current employee payslip. */
     VIEW_PAYSLIP,
+
+    /** Log out from the operator menu. */
     LOGOUT,
+
+    /** Represents an unrecognised operator menu option. */
     INVALID;
 
 

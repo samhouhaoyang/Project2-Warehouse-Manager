@@ -32,14 +32,29 @@ public class Forklift {
         this.carriedItem = null;
     }
 
+    /**
+     * Returns the current row position.
+     *
+     * @return row index
+     */
     public int getRow() {
         return this.row;
     }
 
+    /**
+     * Returns the current column position.
+     *
+     * @return column index
+     */
     public int getCol() {
         return this.col;
     }
 
+    /**
+     * Checks whether the forklift is carrying an item.
+     *
+     * @return true if an item is being carried
+     */
     public boolean isCarrying() {
         return this.carriedItem != null;
     }
@@ -70,18 +85,39 @@ public class Forklift {
         return item;
     }
 
+    /**
+     * Checks whether the forklift is positioned at the start cell.
+     *
+     * @return true if the forklift is at START
+     */
     public boolean isAtStart() {
         return row == Constants.START_ROW && col == Constants.START_COL;
     }
 
+    /**
+     * Checks whether the forklift session is paused.
+     *
+     * @return true if paused
+     */
     public boolean isSessionPaused() {
         return sessionPaused;
     }
 
+    /**
+     * Updates the paused state for this forklift session.
+     *
+     * @param sessionPaused pause state to store
+     */
     public void setSessionPaused(boolean sessionPaused) {
         this.sessionPaused = sessionPaused;
     }
 
+    /**
+     * Moves the forklift to an already validated cell.
+     *
+     * @param row new row index
+     * @param col new column index
+     */
     public void moveTo(int row, int col) {
         this.row = row;
         this.col = col;

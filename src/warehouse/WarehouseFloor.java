@@ -56,79 +56,186 @@ public class WarehouseFloor {
         }
     }
 
+    /**
+     * Marks the fixed start cell after warehouse file data has been loaded.
+     */
     public void markStartCell() {
         grid[Constants.START_ROW][Constants.START_COL].setType(CellType.START);
     }
 
+    /**
+     * Returns this floor number.
+     *
+     * @return floor number
+     */
     public int getFloorNumber() {
         return floorNumber;
     }
 
+    /**
+     * Returns the number of rows on this floor.
+     *
+     * @return row count
+     */
     public int getRows() {
         return rows;
     }
 
+    /**
+     * Returns the number of columns on this floor.
+     *
+     * @return column count
+     */
     public int getCols() {
         return cols;
     }
 
+    /**
+     * Returns the row of this floor's forklift without exposing the forklift.
+     *
+     * @return forklift row
+     */
     public int getForkliftRow() {
         return forklift.getRow();
     }
 
+    /**
+     * Returns the column of this floor's forklift without exposing the forklift.
+     *
+     * @return forklift column
+     */
     public int getForkliftCol() {
         return forklift.getCol();
     }
 
+    /**
+     * Checks whether this floor's forklift is carrying an item.
+     *
+     * @return true if the forklift is carrying an item
+     */
     public boolean isForkliftCarrying() {
         return forklift.isCarrying();
     }
 
+    /**
+     * Checks whether this floor's forklift is at the start cell.
+     *
+     * @return true if the forklift is at START
+     */
     public boolean isForkliftAtStart() {
         return forklift.isAtStart();
     }
 
+    /**
+     * Marks this floor's forklift session as paused.
+     */
     public void pauseForkliftSession() {
         forklift.setSessionPaused(true);
     }
 
+    /**
+     * Picks up an item using this floor's forklift.
+     *
+     * @param item item to pick up
+     */
     public void pickUpWithForklift(Item item) {
         forklift.pickUp(item);
     }
 
+    /**
+     * Drops and returns the item carried by this floor's forklift.
+     *
+     * @return dropped item, or null if none is carried
+     */
     public Item dropFromForklift() {
         return forklift.drop();
     }
 
+    /**
+     * Checks whether a coordinate is inside the floor bounds.
+     *
+     * @param row row index
+     * @param col column index
+     * @return true if the coordinate is in bounds
+     */
     public boolean isInBounds(int row, int col) {
         return row >= 0 && row < rows && col >= 0 && col < cols;
     }
 
+    /**
+     * Checks whether a coordinate is on the boundary wall.
+     *
+     * @param row row index
+     * @param col column index
+     * @return true if the coordinate is on a boundary
+     */
     public boolean isBoundary(int row, int col) {
         return row == 0 || row == rows - 1 || col == 0 || col == cols - 1;
     }
 
+    /**
+     * Returns the cell type at a coordinate.
+     *
+     * @param row row index
+     * @param col column index
+     * @return cell type
+     */
     public CellType getCellTypeAt(int row, int col) {
         return grid[row][col].getType();
     }
 
+    /**
+     * Checks whether a coordinate contains a shelf cell.
+     *
+     * @param row row index
+     * @param col column index
+     * @return true if the coordinate is a shelf
+     */
     public boolean isShelfAt(int row, int col) {
         return isInBounds(row, col) && grid[row][col].isShelfCell();
     }
 
+    /**
+     * Checks whether a coordinate contains a wall.
+     *
+     * @param row row index
+     * @param col column index
+     * @return true if the coordinate is a wall
+     */
     public boolean isWallAt(int row, int col) {
         return isInBounds(row, col) && grid[row][col].isWall();
     }
 
+    /**
+     * Checks whether a coordinate contains a restricted cell.
+     *
+     * @param row row index
+     * @param col column index
+     * @return true if the coordinate is restricted
+     */
     public boolean isRestrictedAt(int row, int col) {
         return isInBounds(row, col) && grid[row][col].isRestricted();
     }
 
 
+    /**
+     * Checks whether a shelf object is attached at a coordinate.
+     *
+     * @param row row index
+     * @param col column index
+     * @return true if a shelf exists at the coordinate
+     */
     public boolean hasShelfAt(int row, int col) {
         return grid[row][col].hasShelf();
     }
 
+    /**
+     * Returns the shelf type at a coordinate.
+     *
+     * @param row row index
+     * @param col column index
+     * @return shelf type, or null if no shelf exists
+     */
     public ShelfType getShelfTypeAt(int row, int col) {
         return grid[row][col].getShelfType();
     }
@@ -184,12 +291,25 @@ public class WarehouseFloor {
         return grid[row][col].removeItemFromShelf(userIndex);
     }
 
+    /**
+     * Marks a shelf as visited by the forklift.
+     *
+     * @param row row index
+     * @param col column index
+     */
     public void markShelfVisitedAt(int row, int col) {
         if (isInBounds(row, col) && isShelfAt(row, col)) {
             visitedShelves[row][col] = true;
         }
     }
 
+    /**
+     * Checks whether a shelf has been visited.
+     *
+     * @param row row index
+     * @param col column index
+     * @return true if the shelf has been visited
+     */
     public boolean isShelfVisitedAt(int row, int col) {
         if (!isInBounds(row, col)) {
             return false;
@@ -223,6 +343,9 @@ public class WarehouseFloor {
         printFloorWithoutHeader();
     }
 
+    /**
+     * Prints the forklift position and grid cells without the floor heading.
+     */
     public void printFloorWithoutHeader() {
         Messages.printForkliftPosition(forklift.getRow(), forklift.getCol());
 
@@ -239,6 +362,12 @@ public class WarehouseFloor {
         }
     }
 
+    /**
+     * Attempts to move the forklift in the requested direction.
+     *
+     * @param direction movement direction
+     * @return result describing whether movement succeeded or hit an obstacle
+     */
     public MovementResult moveForklift(Direction direction) {
         int nextRow = forklift.getRow();
         int nextCol = forklift.getCol();
@@ -265,9 +394,19 @@ public class WarehouseFloor {
         return MovementResult.MOVED;
     }
 
+    /**
+     * Resets the forklift position and carried-item state.
+     */
     public void resetForklift() {
         forklift.resetSessionState();
     }
+
+    /**
+     * Prints items on the shelf at the given coordinate.
+     *
+     * @param row row index
+     * @param col column index
+     */
     public void printShelfItemsAt(int row, int col) {
         if (!isInBounds(row, col) || !isShelfAt(row, col)) {
             System.out.println(Messages.NO_ITEMS_ON_SHELF);
@@ -321,6 +460,11 @@ public class WarehouseFloor {
         return true;
     }
 
+    /**
+     * Checks whether every shelf on this floor currently has no items.
+     *
+     * @return true if all shelves are empty
+     */
     public boolean areAllShelfItemsEmpty() {
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {

@@ -6,12 +6,25 @@ import utils.Constants;
  * Represents menu options available to supervisors.
  */
 public enum SupervisorMenuOption {
+    /** Start or resume warehouse navigation from the supervisor menu. */
     START_SHIFT,
+
+    /** Resume a previously started warehouse shift. */
     RESUME_SHIFT,
+
+    /** Show the supervisor's shift summary. */
     VIEW_SHIFT_SUMMARY,
+
+    /** Show the supervisor's payslip. */
     VIEW_PAYSLIP,
+
+    /** Show direct reportees' shift summaries. */
     VIEW_REPORTEE_SHIFT_SUMMARY,
+
+    /** Log out from the supervisor menu. */
     LOGOUT,
+
+    /** Represents an unrecognised supervisor menu option. */
     INVALID;
 
 

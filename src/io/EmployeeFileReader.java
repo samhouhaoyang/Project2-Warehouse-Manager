@@ -10,12 +10,27 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Reads employee data from a CSV file and builds employee objects.
+ */
 public class EmployeeFileReader {
     private final ArrayList<String> managerIds;
 
+    /**
+     * Creates an employee file reader.
+     */
     public EmployeeFileReader(){
         this.managerIds = new ArrayList<>();
     }
+
+    /**
+     * Reads employees from the supplied CSV file path.
+     * Invalid data lines are skipped after printing the required message.
+     *
+     * @param path employee file path
+     * @return employees loaded from valid lines
+     * @throws FileNotFoundException if the file cannot be opened
+     */
     public ArrayList<Employee> readEmployees(String path) throws FileNotFoundException {
         managerIds.clear();
 

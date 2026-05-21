@@ -23,6 +23,10 @@ import java.util.ArrayList;
 
 import static enums.PayrollManagerMenuOption.fromInput;
 
+/**
+ * Coordinates program startup, file loading, employee login, menus,
+ * warehouse navigation, and payslip persistence.
+ */
 public class WarehouseManagerEngine {
     private ArrayList<Employee> employees;
     private ArrayList<Payslip> loadedPayslips;
@@ -43,6 +47,9 @@ public class WarehouseManagerEngine {
     private boolean hasPausedShift;
     private boolean shiftCompleted;
 
+    /**
+     * Creates a warehouse manager engine with empty runtime state.
+     */
     public WarehouseManagerEngine() {
         employees = new ArrayList<>();
         loadedPayslips = new ArrayList<>();
@@ -55,6 +62,12 @@ public class WarehouseManagerEngine {
 
     private static final Scanner SCANNER = new Scanner(System.in);
 
+    /**
+     * Program entry point.
+     *
+     * @param args command-line arguments for floors, rows, columns,
+     *             warehouse file, and employees file
+     */
     public static void main(String[] args) {
         WarehouseManagerEngine engine = new WarehouseManagerEngine();
 
@@ -76,6 +89,7 @@ public class WarehouseManagerEngine {
 
         return null;
     }
+
     private void readEmployees(String path) {
         EmployeeFileReader reader = new EmployeeFileReader();
 
@@ -92,10 +106,6 @@ public class WarehouseManagerEngine {
         loadedPayslips = reader.readPayslips(Constants.PAYSLIPS_FILE_PATH);
         payslipHeader = reader.getHeader();
     }
-
-
-
-
 
     private void savePayslipsIfNeeded() {
         ArrayList<Payslip> payslipsToSave;
@@ -169,8 +179,9 @@ public class WarehouseManagerEngine {
         return true;
     }
 
-
-
+    /**
+     * Loads warehouse, employee, and payslip data in the required order.
+     */
     private void loadFiles() {
         warehouseMap = new WarehouseMap(floors, rows, columns);
         Messages.printProcessingWarehouseFile(warehouseMapFilePath);
@@ -193,6 +204,9 @@ public class WarehouseManagerEngine {
         }
     }
 
+    /**
+     * Runs the employee login loop until the user terminates the program.
+     */
     private void runMainMenuLoop()  {
         Messages.printWelcomeA2();
 
@@ -260,6 +274,7 @@ public class WarehouseManagerEngine {
             }
         }
     }
+
     private void runOperatorMenu(Employee employee) {
         boolean isRunning = true;
 
@@ -321,6 +336,11 @@ public class WarehouseManagerEngine {
         }
     }
 
+    /**
+     * Starts a new shift or resumes the paused shift when appropriate.
+     *
+     * @param employee employee operating the warehouse shift
+     */
     private void startWarehouseShift(Employee employee) {
         if (hasPausedShift) {
             shiftCompleted = false;
@@ -340,6 +360,11 @@ public class WarehouseManagerEngine {
         runWarehouseShift(employee);
     }
 
+    /**
+     * Resumes a previously paused warehouse shift.
+     *
+     * @param employee employee operating the warehouse shift
+     */
     private void resumeWarehouseShift(Employee employee) {
         if (stopIfNoDeliverableWork()) {
             return;
@@ -366,6 +391,11 @@ public class WarehouseManagerEngine {
         return false;
     }
 
+    /**
+     * Runs the floor selection loop for an active warehouse shift.
+     *
+     * @param employee employee operating the shift
+     */
     private void runWarehouseShift(Employee employee) {
         boolean selectingFloor = true;
 
@@ -404,6 +434,13 @@ public class WarehouseManagerEngine {
         }
     }
 
+    /**
+     * Runs the movement menu for one selected warehouse floor.
+     *
+     * @param employee employee operating the forklift
+     * @param currentFloor selected floor
+     * @return true if the whole warehouse shift completed during this loop
+     */
     private boolean runFloorMovementLoop(Employee employee, WarehouseFloor currentFloor) {
         boolean isInFloor = true;
         boolean completedNow = false;
@@ -449,7 +486,6 @@ public class WarehouseManagerEngine {
         return completedNow;
     }
 
-
     private void handleMovementResult(Employee employee, WarehouseFloor floor,
                                       MovementResult result) {
         switch (result) {
@@ -468,6 +504,7 @@ public class WarehouseManagerEngine {
             case INVALID_INPUT -> System.out.println(Messages.INVALID_INPUT);
         }
     }
+
     private void handlePostMoveCell(Employee employee, WarehouseFloor floor) {
         int forkliftRow = floor.getForkliftRow();
         int forkliftCol = floor.getForkliftCol();
@@ -484,6 +521,7 @@ public class WarehouseManagerEngine {
             warehouseMap.getFloorByNumber(floorNumber).resetForklift();
         }
     }
+
     private void viewOwnPayslip(Employee employee) {
         try {
             Payslip payslip = getPayslipForEmployee(employee);
@@ -560,6 +598,7 @@ public class WarehouseManagerEngine {
         }
 
     }
+
     private void viewAllEmployeeShiftSummary() {
         for (int i = 0; i < employees.size(); i++) {
             Employee employee = employees.get(i);
@@ -646,7 +685,6 @@ public class WarehouseManagerEngine {
 
         return null;
     }
-
 
     private void runShelfMenu(Employee employee, WarehouseFloor floor) {
         boolean inShelfMenu = true;

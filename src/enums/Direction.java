@@ -6,12 +6,25 @@ import utils.Constants;
  * Represents movement-menu commands for forklift navigation.
  */
 public enum Direction {
+    /** Move the forklift up one row. */
     UP,
+
+    /** Move the forklift down one row. */
     DOWN,
+
+    /** Move the forklift left one column. */
     LEFT,
+
+    /** Move the forklift right one column. */
     RIGHT,
+
+    /** Deliver the carried item at the start cell. */
     DELIVER,
+
+    /** Leave the movement menu. */
     QUIT,
+
+    /** Represents an unrecognised movement command. */
     INVALID;
 
     /**

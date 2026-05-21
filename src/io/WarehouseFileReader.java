@@ -21,6 +21,12 @@ import java.util.Scanner;
 public class WarehouseFileReader {
 
     /**
+     * Creates a warehouse file reader.
+     */
+    public WarehouseFileReader() {
+    }
+
+    /**
      * Reads the warehouse file and updates the given warehouse map.
      *
      * @param path the warehouse file path
@@ -226,7 +232,7 @@ public class WarehouseFileReader {
      * @param floor the warehouse floor
      * @param row the row index
      * @param col the column index
-     * @param shelfType parsed shelf type
+     * @param shelfTypeText parsed shelf type text
      * @param itemName item name text
      * @param lineNumber the current line number
      * @throws IncorrectLocationException if the shelf overlaps a restricted cell

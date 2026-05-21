@@ -6,10 +6,19 @@ import utils.Constants;
  * Represents menu options available to payroll managers.
  */
 public enum PayrollManagerMenuOption {
+    /** Show all employees' shift summaries. */
     VIEW_ALL_EMPLOYEE_SHIFT,
+
+    /** Generate payslips for the current session. */
     GENERATE_PAYSLIPS,
+
+    /** Show generated or loaded payslips. */
     VIEW_ALL_PAYSLIPS,
+
+    /** Log out from the payroll manager menu. */
     LOGOUT,
+
+    /** Represents an unrecognised payroll manager menu option. */
     INVALID;
 
 

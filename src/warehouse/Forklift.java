@@ -1,7 +1,7 @@
 /**
  * Forklift represents the player-controlled vehicle in the warehouse.
  * It manages position, movement, collision statistics, carried items,
- * session state, and operation history.
+ * and session state.
  */
 package warehouse;
 
@@ -27,8 +27,7 @@ public class Forklift {
 
     /**
      * Constructs a Forklift object.
-     * Initialises operation history and resets the forklift
-     * to its starting state.
+     * Resets the forklift to its starting state.
      */
     public Forklift() {
 

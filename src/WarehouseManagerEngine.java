@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import employees.*;
 import enums.*;
+import exceptions.NotFoundException;
 
 import io.EmployeeFileReader;
 import io.PayslipFileReader;
@@ -23,19 +24,16 @@ import java.util.ArrayList;
 
 import static enums.PayrollManagerMenuOption.fromInput;
 
-/**
-You can modify any code in this class including the existing method signatures present.
-*/
 public class WarehouseManagerEngine {
     private ArrayList<Employee> employees;
     private ArrayList<Payslip> loadedPayslips;
     private final ArrayList<Payslip> currentPayslips;
     private boolean hasGeneratedCurrentPayslips;
     private boolean payslipsModified;
+    private boolean payslipFileExists;
+    private String payslipHeader;
 
     private WarehouseMap warehouseMap;
-    private int activeFloorNumber;
-
 
     private int floors;
     private int rows;
@@ -52,7 +50,8 @@ public class WarehouseManagerEngine {
         currentPayslips = new ArrayList<>();
         hasGeneratedCurrentPayslips = false;
         payslipsModified = false;
-        activeFloorNumber = Constants.MIN_VALID_FLOOR_NUMBER;
+        payslipFileExists = false;
+        payslipHeader = Constants.PAYSLIPS_HEADER;
     }
 
     private static final Scanner SCANNER = new Scanner(System.in);
@@ -90,7 +89,9 @@ public class WarehouseManagerEngine {
 
     private void readPayslips() {
         PayslipFileReader reader = new PayslipFileReader();
+        payslipFileExists = new File(Constants.PAYSLIPS_FILE_PATH).exists();
         loadedPayslips = reader.readPayslips(Constants.PAYSLIPS_FILE_PATH);
+        payslipHeader = reader.getHeader();
     }
 
 
@@ -117,7 +118,7 @@ public class WarehouseManagerEngine {
 
         try {
             Messages.printSavingPayslipsFile(Constants.PAYSLIPS_FILE_PATH);
-            writer.writePayslips(payslipsToSave);
+            writer.writePayslips(payslipsToSave, payslipHeader);
         } catch (FileNotFoundException e) {
             Messages.printFileProcessingError();
         }
@@ -126,16 +127,13 @@ public class WarehouseManagerEngine {
 
 
     private void exitProgram(){
-        //TODO: Write the payslips data at the end.
         savePayslipsIfNeeded();
         System.out.println(Messages.GOODBYE);
 
     }
 
     private boolean validateArgs(String[] args) {
-        //TODO: validate the args
-        int VALID_ARGS_NUM = 5;
-        if (args.length < VALID_ARGS_NUM) {
+        if (args.length < Constants.VALID_ARGS_NUM) {
             System.out.println(Messages.INVALID_ARGS_USAGE);
             return false;
         }
@@ -155,8 +153,8 @@ public class WarehouseManagerEngine {
             return false;
         }
 
-        int MIN_COLS_OR_ROWS = 4;
-        if (rows < MIN_COLS_OR_ROWS || columns < MIN_COLS_OR_ROWS){
+        if (rows < Constants.MIN_VALID_ROWS_OR_COLS
+                || columns < Constants.MIN_VALID_ROWS_OR_COLS){
             System.out.println(Messages.INVALID_ROWs_COLS);
             return false;
         }
@@ -178,9 +176,7 @@ public class WarehouseManagerEngine {
         warehouseMap = new WarehouseMap(floors, rows, columns);
         Messages.printProcessingWarehouseFile(warehouseMapFilePath);
         readWarehouseMap(warehouseMap);
-        // below two line for testing only
-        //Messages.printLegend();
-        //warehouseMap.printMap();
+        warehouseMap.markStartCells();
 
         Messages.printProcessingEmployeesFile(employeesFilePath);
         readEmployees(employeesFilePath);
@@ -200,7 +196,6 @@ public class WarehouseManagerEngine {
 
     private void runMainMenuLoop()  {
         Messages.printWelcomeA2();
-       //Run main menu loop based on employee selection
 
         boolean isRunning = true;
 
@@ -241,7 +236,6 @@ public class WarehouseManagerEngine {
     }
 
 
-    //TODO: Create other methods
     private void runSupervisorMenu(Supervisor supervisor){
         boolean isRunning = true;
         while(isRunning) {
@@ -251,9 +245,8 @@ public class WarehouseManagerEngine {
             SupervisorMenuOption option = SupervisorMenuOption.fromInput(input);
 
             switch(option) {
-                // TODO: connect with warehouseshifts from project 1
-                case START_SHIFT -> startWarehouseShift(supervisor); // temporary stub
-                case RESUME_SHIFT -> resumeWarehouseShift(supervisor); // temporary stub
+                case START_SHIFT -> startWarehouseShift(supervisor);
+                case RESUME_SHIFT -> resumeWarehouseShift(supervisor);
 
                 case VIEW_SHIFT_SUMMARY -> supervisor.getShiftSummary().printSummary();
                 case VIEW_PAYSLIP -> viewOwnPayslip(supervisor);
@@ -278,9 +271,8 @@ public class WarehouseManagerEngine {
             OperatorMenuOption option = OperatorMenuOption.fromInput(input);
 
             switch(option) {
-                // TODO: connect with warehouseshifts from project 1
-                case START_SHIFT -> startWarehouseShift(employee); // temporary stub
-                case RESUME_SHIFT -> resumeWarehouseShift(employee); // temporary stub
+                case START_SHIFT -> startWarehouseShift(employee);
+                case RESUME_SHIFT -> resumeWarehouseShift(employee);
 
                 case VIEW_SHIFT_SUMMARY -> employee.getShiftSummary().printSummary();
                 case VIEW_PAYSLIP -> viewOwnPayslip(employee);
@@ -318,7 +310,6 @@ public class WarehouseManagerEngine {
                 }
                 case GENERATE_PAYSLIPS -> generateCurrentPayslips();
                 case VIEW_ALL_PAYSLIPS -> {
-                    System.out.println();
                     viewAllPayslips();
                 }
                 case LOGOUT -> isRunning = false;
@@ -332,6 +323,12 @@ public class WarehouseManagerEngine {
     }
 
     private void startWarehouseShift(Employee employee) {
+        if (hasPausedShift) {
+            shiftCompleted = false;
+            runWarehouseShift(employee);
+            return;
+        }
+
         resetAllForklifts();
 
         hasPausedShift = false;
@@ -488,6 +485,16 @@ public class WarehouseManagerEngine {
         }
     }
     private void viewOwnPayslip(Employee employee) {
+        try {
+            Payslip payslip = getPayslipForEmployee(employee);
+            System.out.println();
+            employee.viewPayslip(payslip);
+        } catch (NotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private Payslip getPayslipForEmployee(Employee employee) throws NotFoundException {
         ArrayList<Payslip> payslipSource;
 
         if (hasGeneratedCurrentPayslips) {
@@ -497,17 +504,23 @@ public class WarehouseManagerEngine {
         }
 
         if (payslipSource.isEmpty()) {
-            Messages.printPaySlipNotGenerated();
-            return;
+            if (!hasGeneratedCurrentPayslips && payslipFileExists) {
+                throw new NotFoundException(
+                        Messages.formatPayslipNotFound(employee.getEmployeeId())
+                );
+            }
+
+            throw new NotFoundException(Messages.PAYSLIP_NOT_GENERATED);
         }
         Payslip payslip = findPayslipByEmployeeId(payslipSource, employee.getEmployeeId());
 
         if (payslip == null) {
-            Messages.printPayslipNotFound(employee.getEmployeeId());
-            return;
+            throw new NotFoundException(
+                    Messages.formatPayslipNotFound(employee.getEmployeeId())
+            );
         }
 
-        employee.viewPayslip(payslip);
+        return payslip;
     }
 
     private Payslip findPayslipByEmployeeId(ArrayList<Payslip> payslips, String employeeId) {
@@ -528,6 +541,8 @@ public class WarehouseManagerEngine {
             System.out.println(Messages.NO_REPORTEES_FOUND);
             return;
         }
+
+        System.out.println();
 
         for (int i = 0; i < reportees.size(); i++) {
             Employee employee = reportees.get(i);
@@ -593,14 +608,17 @@ public class WarehouseManagerEngine {
             return;
         }
 
+        System.out.println();
         printPayslips(payslipsToPrint);
     }
 
     private ArrayList<Payslip> filterPayslipsForCurrentEmployees(ArrayList<Payslip> payslips) {
         ArrayList<Payslip> filteredPayslips = new ArrayList<>();
 
-        for (Payslip payslip : payslips) {
-            if (findEmployeeById(payslip.getEmployeeId()) != null) {
+        for (Employee employee : employees) {
+            Payslip payslip = findPayslipByEmployeeId(payslips, employee.getEmployeeId());
+
+            if (payslip != null) {
                 filteredPayslips.add(payslip);
             }
         }

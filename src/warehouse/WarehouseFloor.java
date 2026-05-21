@@ -22,7 +22,7 @@ public class WarehouseFloor {
     private final boolean[][] visitedShelves;
 
     /**
-     * Creates a warehouse floor with boundary walls, aisles, a start cell,
+     * Creates a warehouse floor with boundary walls, aisles,
      * and a forklift at the start position.
      *
      * @param floorNumber the floor number, starting from 1
@@ -43,7 +43,6 @@ public class WarehouseFloor {
     /**
      * Initialises the floor grid.
      * Boundary cells are walls. Inner cells are aisles.
-     * The start cell is placed at (1,1).
      */
     private void initialiseCells() {
         for (int row = 0; row < rows; row++) {
@@ -55,7 +54,9 @@ public class WarehouseFloor {
                 }
             }
         }
+    }
 
+    public void markStartCell() {
         grid[Constants.START_ROW][Constants.START_COL].setType(CellType.START);
     }
 
@@ -145,7 +146,9 @@ public class WarehouseFloor {
      * @param itemName the item name
      */
     public void addItemToShelfAt(int row, int col, String itemName) {
-        if (itemName == null || itemName.trim().isEmpty() || itemName.trim().equals("-")) {
+        if (itemName == null
+                || itemName.trim().isEmpty()
+                || itemName.trim().equals(Constants.HYPHEN)) {
             return;
         }
 

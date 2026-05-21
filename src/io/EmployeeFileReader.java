@@ -17,7 +17,6 @@ public class EmployeeFileReader {
         this.managerIds = new ArrayList<>();
     }
     public ArrayList<Employee> readEmployees(String path) throws FileNotFoundException {
-        // TODO: when accessed by a caller function need to use a try-catch for FileNotFoundException
         managerIds.clear();
 
         ArrayList<Employee> employees = new ArrayList<>();
@@ -75,8 +74,7 @@ public class EmployeeFileReader {
     public Employee processLine(String line, int lineNumber){
         String[] lineArray = line.split(Constants.CSV_DELIMITER, -1);
         // incorrect number of columns
-        if (lineArray.length < Constants.EMPLOYEE_MIN_FIELD_COUNT
-                || lineArray.length > Constants.EMPLOYEE_MAX_FIELD_COUNT) {
+        if (lineArray.length < Constants.EMPLOYEE_MIN_FIELD_COUNT) {
             Messages.printEmployeeFileInvalidLine(lineNumber);
             return null;
         }
@@ -85,7 +83,7 @@ public class EmployeeFileReader {
         String employeeName = lineArray[1].trim();
         String designationText = lineArray[2].trim();
         String baseSalaryText = lineArray[3].trim();
-        String managerId = "";
+        String managerId = Constants.EMPTY_STRING;
 
         // handles manager if linked to one
         if(lineArray.length >= Constants.EMPLOYEE_MAX_FIELD_COUNT){

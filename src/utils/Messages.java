@@ -62,13 +62,37 @@ public final class Messages {
     public static final String INCORRECT_EMPLOYEE_SALARY_DETAILS =
             "Incorrect Employee Salary details at line %d. Skipping this line.";
 
+    public static final String INVALID_WAREHOUSE_LINE =
+            "Invalid Warehouse line at line %d. Skipping this line.";
+
+    public static final String INVALID_FLOOR_NUMBER_IN_WAREHOUSE_FILE =
+            "Invalid floor number in warehouse file: %d. Skipping this line.";
+
+    public static final String INVALID_LOCATION_IN_WAREHOUSE_FILE =
+            "Invalid location in warehouse file at line %d. Skipping this line.";
+
+    public static final String INVALID_CELL_TYPE =
+            "Invalid cell type at line %d. Skipping this line.";
+
+    public static final String INVALID_SHELF_TYPE =
+            "Invalid shelf type at line %d. Skipping this line.";
+
+    public static final String RESTRICTED_LOCATION_OVERLAPS_SHELF =
+            "Restricted location overlaps shelf at line %d. Skipping this line.";
+
+    public static final String SHELF_TYPE_CANNOT_BE_RESTRICTED_LOCATION =
+            "Shelf Type cannot be defined for Restricted Location at line %d. Skipping this line.";
+
+    public static final String SHELF_TYPE_MISMATCHED =
+            "Shelf Type mismatched at line %d. Skipping this line.";
+
     /* ===== General messages ===== */
 
     public static final String INVALID_INPUT =
             "Invalid input.";
 
     public static final String NO_SHIFT_TO_RESUME =
-            "No shift to resume.";
+            "Shift not started, cannot resume shift.";
 
     public static final String GOODBYE =
             "Goodbye!";
@@ -131,6 +155,12 @@ public final class Messages {
     public static final String SAVING_PAYSLIPS_FILE =
             "Saving Payslips file: %s%n";
 
+    public static final String PAYSLIP_NOT_GENERATED =
+            "Payslip not generated yet.";
+
+    public static final String PAYSLIP_NOT_FOUND =
+            "Employee %s's payslip not found.";
+
     /* ===== Welcome / login ===== */
 
     public static void printWelcome() {
@@ -168,6 +198,42 @@ public final class Messages {
 
     public static void printSavingPayslipsFile(String path) {
         System.out.printf(SAVING_PAYSLIPS_FILE, path);
+    }
+
+    public static String formatPayslipNotFound(String employeeId) {
+        return String.format(PAYSLIP_NOT_FOUND, employeeId);
+    }
+
+    public static String formatInvalidWarehouseLine(int lineNumber) {
+        return String.format(INVALID_WAREHOUSE_LINE, lineNumber);
+    }
+
+    public static String formatInvalidFloorNumberInWarehouseFile(int lineNumber) {
+        return String.format(INVALID_FLOOR_NUMBER_IN_WAREHOUSE_FILE, lineNumber);
+    }
+
+    public static String formatInvalidLocationInWarehouseFile(int lineNumber) {
+        return String.format(INVALID_LOCATION_IN_WAREHOUSE_FILE, lineNumber);
+    }
+
+    public static String formatInvalidCellType(int lineNumber) {
+        return String.format(INVALID_CELL_TYPE, lineNumber);
+    }
+
+    public static String formatInvalidShelfType(int lineNumber) {
+        return String.format(INVALID_SHELF_TYPE, lineNumber);
+    }
+
+    public static String formatRestrictedLocationOverlapsShelf(int lineNumber) {
+        return String.format(RESTRICTED_LOCATION_OVERLAPS_SHELF, lineNumber);
+    }
+
+    public static String formatShelfTypeCannotBeRestrictedLocation(int lineNumber) {
+        return String.format(SHELF_TYPE_CANNOT_BE_RESTRICTED_LOCATION, lineNumber);
+    }
+
+    public static String formatShelfTypeMismatched(int lineNumber) {
+        return String.format(SHELF_TYPE_MISMATCHED, lineNumber);
     }
 
     public static void printEmployeeLogin() {
@@ -324,11 +390,11 @@ public final class Messages {
     }
 
     public static void printPaySlipNotGenerated() {
-        System.out.println("Payslip not generated yet.");
+        System.out.println(PAYSLIP_NOT_GENERATED);
     }
 
     public static void printPayslipNotFound(String employeeId) {
-        System.out.println("Employee " + employeeId + "'s payslip not found.");
+        System.out.println(formatPayslipNotFound(employeeId));
     }
 
     public static void printPaySlipGenerated() {

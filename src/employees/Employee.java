@@ -1,8 +1,9 @@
 package employees;
 
 import enums.DesignationType;
+import utils.Constants;
 
-public abstract class Employee implements PayslipViewable {
+public abstract class Employee {
     private final String employeeId;
     private final String employeeName;
     private final DesignationType designation;
@@ -54,13 +55,13 @@ public abstract class Employee implements PayslipViewable {
 
     public Payslip generatePayslip() {
         double deliveredPay = shiftSummary.getItemsDelivered()
-                * PayslipConstants.DELIVERY_PAY;
+                * Constants.DELIVERY_PAY;
 
         double wallPenalty = shiftSummary.getWallHits()
-                * PayslipConstants.WALL_HIT_PENALTY;
+                * Constants.WALL_HIT_PENALTY;
 
         double restrictedPenalty = shiftSummary.getRestrictedAreaHits()
-                * PayslipConstants.RESTRICTED_AREA_PENALTY;
+                * Constants.RESTRICTED_AREA_PENALTY;
 
         double reporteePay = getReporteeManagementPay();
 
@@ -70,12 +71,11 @@ public abstract class Employee implements PayslipViewable {
                 - restrictedPenalty
                 + reporteePay;
 
-        return new Payslip(employeeId, employeeName, baseSalary,
+        return new Payslip(this,
                 deliveredPay, wallPenalty, restrictedPenalty,
                 reporteePay, netSalary);
     }
 
-    @Override
     public void viewPayslip(Payslip payslip) {
         if (payslip != null) {
             payslip.printPayslip();

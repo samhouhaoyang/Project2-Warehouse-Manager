@@ -1,6 +1,6 @@
 package exceptions;
 
-public class InvalidWarehouseException extends Throwable {
+public class InvalidWarehouseException extends Exception {
     public InvalidWarehouseException(String message) {
         super(message);
     }

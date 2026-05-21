@@ -1,5 +1,7 @@
 package enums;
 
+import utils.Constants;
+
 public enum Direction {
     UP,
     DOWN,
@@ -15,12 +17,12 @@ public enum Direction {
         }
 
         return switch (input.trim().toUpperCase()) {
-            case "U" -> UP;
-            case "D" -> DOWN;
-            case "L" -> LEFT;
-            case "R" -> RIGHT;
-            case "T" -> DELIVER;
-            case "Q" -> QUIT;
+            case Constants.INPUT_UP -> UP;
+            case Constants.INPUT_DOWN -> DOWN;
+            case Constants.INPUT_LEFT -> LEFT;
+            case Constants.INPUT_RIGHT -> RIGHT;
+            case Constants.INPUT_DELIVER -> DELIVER;
+            case Constants.QUIT -> QUIT;
             default -> INVALID;
         };
     }

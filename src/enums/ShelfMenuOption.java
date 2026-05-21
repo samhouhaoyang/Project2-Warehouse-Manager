@@ -1,5 +1,7 @@
 package enums;
 
+import utils.Constants;
+
 public enum ShelfMenuOption {
     VIEW_ITEMS,
     PICK_ITEM,
@@ -12,9 +14,9 @@ public enum ShelfMenuOption {
         }
 
         return switch (input.trim().toUpperCase()) {
-            case "V" -> VIEW_ITEMS;
-            case "P" -> PICK_ITEM;
-            case "Q" -> QUIT;
+            case Constants.INPUT_VIEW -> VIEW_ITEMS;
+            case Constants.INPUT_PICK -> PICK_ITEM;
+            case Constants.QUIT -> QUIT;
             default -> INVALID;
         };
     }

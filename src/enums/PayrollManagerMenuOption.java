@@ -1,5 +1,7 @@
 package enums;
 
+import utils.Constants;
+
 public enum PayrollManagerMenuOption {
     VIEW_ALL_EMPLOYEE_SHIFT,
     GENERATE_PAYSLIPS,
@@ -10,10 +12,10 @@ public enum PayrollManagerMenuOption {
 
     public static PayrollManagerMenuOption fromInput(String input) {
         return switch (input) {
-            case "1" -> VIEW_ALL_EMPLOYEE_SHIFT;
-            case "2" -> GENERATE_PAYSLIPS;
-            case "3" -> VIEW_ALL_PAYSLIPS;
-            case "4" -> LOGOUT;
+            case Constants.MENU_OPTION_1 -> VIEW_ALL_EMPLOYEE_SHIFT;
+            case Constants.MENU_OPTION_2 -> GENERATE_PAYSLIPS;
+            case Constants.MENU_OPTION_3 -> VIEW_ALL_PAYSLIPS;
+            case Constants.MENU_OPTION_4 -> LOGOUT;
             default -> INVALID;
         };
     }

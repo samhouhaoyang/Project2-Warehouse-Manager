@@ -6,6 +6,8 @@ import exceptions.IncorrectLocationException;
 import exceptions.IncorrectTypeException;
 import exceptions.InvalidLocationException;
 import exceptions.InvalidWarehouseException;
+import utils.Constants;
+import utils.Messages;
 import warehouse.WarehouseFloor;
 import warehouse.WarehouseMap;
 
@@ -17,12 +19,6 @@ import java.util.Scanner;
  * Reads warehouse map data from a CSV file and loads it into a WarehouseMap.
  */
 public class WarehouseFileReader {
-    private static final int WAREHOUSE_FIELD_COUNT = 6;
-    private static final String CSV_DELIMITER = ",";
-    private static final String RESTRICTED_EMPTY_SHELF_TYPE = "-";
-    private static final String EMPTY_ITEM_NAME = "-";
-    private static final String FILE_CELL_TYPE_SHELF = "SHELF";
-    private static final String FILE_CELL_TYPE_RESTRICTED = "RESTRICTED";
 
     /**
      * Reads the warehouse file and updates the given warehouse map.
@@ -39,12 +35,11 @@ public class WarehouseFileReader {
 
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
+            lineNumber++;
 
             if (line.trim().isEmpty()) {
                 continue;
             }
-
-            lineNumber++;
 
             if (lineNumber == 1) {
                 continue;
@@ -76,31 +71,20 @@ public class WarehouseFileReader {
             IncorrectTypeException,
             IncorrectLocationException {
 
-        String[] parts = line.split(CSV_DELIMITER, -1);
+        String[] parts = line.split(Constants.CSV_DELIMITER);
 
-        if (parts.length != WAREHOUSE_FIELD_COUNT) {
-            throw new InvalidWarehouseException(
-                    "Invalid Warehouse line at line " + lineNumber + ". Skipping this line."
-            );
+        if (parts.length != Constants.WAREHOUSE_FIELD_COUNT) {
+            throw new InvalidWarehouseException(Messages.formatInvalidWarehouseLine(lineNumber));
         }
 
-        int floorNumber;
-        int row;
-        int col;
-
-        try {
-            floorNumber = Integer.parseInt(parts[0].trim());
-            row = Integer.parseInt(parts[1].trim());
-            col = Integer.parseInt(parts[2].trim());
-        } catch (NumberFormatException e) {
-            throw new InvalidWarehouseException(
-                    "Invalid Warehouse line at line " + lineNumber + ". Skipping this line."
-            );
-        }
+        int floorNumber = parseWarehouseInteger(parts[0].trim(), lineNumber);
 
         validateFloorNumber(floorNumber, lineNumber, warehouseMap);
 
         WarehouseFloor floor = warehouseMap.getFloorByNumber(floorNumber);
+
+        int row = parseWarehouseInteger(parts[1].trim(), lineNumber);
+        int col = parseWarehouseInteger(parts[2].trim(), lineNumber);
 
         validateLocation(row, col, lineNumber, floor);
 
@@ -108,19 +92,22 @@ public class WarehouseFileReader {
         String shelfTypeText = parts[4].trim();
         String itemName = parts[5].trim();
 
-        if (itemName.isEmpty()) {
-            throw new InvalidWarehouseException(
-                    "Invalid Warehouse line at line " + lineNumber + ". Skipping this line."
-            );
-        }
-
         CellType cellType = parseFileCellType(cellTypeText, lineNumber);
 
         if (cellType == CellType.RESTRICTED) {
             processRestrictedCell(floor, row, col, shelfTypeText, lineNumber);
         } else {
-            ShelfType shelfType = parseShelfType(shelfTypeText, lineNumber);
-            processShelfCell(floor, row, col, shelfType, itemName, lineNumber);
+            processShelfCell(floor, row, col, shelfTypeText, itemName, lineNumber);
+        }
+    }
+
+    private int parseWarehouseInteger(String value, int lineNumber)
+            throws InvalidWarehouseException {
+
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new InvalidWarehouseException(Messages.formatInvalidWarehouseLine(lineNumber));
         }
     }
 
@@ -137,9 +124,7 @@ public class WarehouseFileReader {
 
         if (!warehouseMap.isValidFloorNumber(floorNumber)) {
             throw new InvalidWarehouseException(
-                    "Invalid floor number in warehouse file: "
-                            + lineNumber
-                            + ". Skipping this line."
+                    Messages.formatInvalidFloorNumberInWarehouseFile(lineNumber)
             );
         }
     }
@@ -158,9 +143,7 @@ public class WarehouseFileReader {
 
         if (!floor.isInBounds(row, col) || floor.isBoundary(row, col)) {
             throw new InvalidLocationException(
-                    "Invalid location in warehouse file at line "
-                            + lineNumber
-                            + ". Skipping this line."
+                    Messages.formatInvalidLocationInWarehouseFile(lineNumber)
             );
         }
     }
@@ -179,19 +162,15 @@ public class WarehouseFileReader {
     private CellType parseFileCellType(String cellTypeText, int lineNumber)
             throws IncorrectTypeException {
 
-        if (FILE_CELL_TYPE_RESTRICTED.equals(cellTypeText)) {
+        if (Constants.FILE_CELL_TYPE_RESTRICTED.equals(cellTypeText)) {
             return CellType.RESTRICTED;
         }
 
-        if (FILE_CELL_TYPE_SHELF.equals(cellTypeText)) {
+        if (Constants.FILE_CELL_TYPE_SHELF.equals(cellTypeText)) {
             return CellType.SHELF;
         }
 
-        throw new IncorrectTypeException(
-                "Invalid cell type at line "
-                        + lineNumber
-                        + ". Skipping this line."
-        );
+        throw new IncorrectTypeException(Messages.formatInvalidCellType(lineNumber));
     }
 
     /**
@@ -208,11 +187,7 @@ public class WarehouseFileReader {
         try {
             return ShelfType.valueOf(shelfTypeText);
         } catch (IllegalArgumentException e) {
-            throw new IncorrectTypeException(
-                    "Invalid shelf type at line "
-                            + lineNumber
-                            + ". Skipping this line."
-            );
+            throw new IncorrectTypeException(Messages.formatInvalidShelfType(lineNumber));
         }
     }
 
@@ -232,18 +207,14 @@ public class WarehouseFileReader {
 
         if (floor.isShelfAt(row, col)) {
             throw new IncorrectLocationException(
-                    "Restricted location overlaps shelf at line "
-                            + lineNumber
-                            + ". Skipping this line."
+                    Messages.formatRestrictedLocationOverlapsShelf(lineNumber)
             );
         }
 
         if (!shelfTypeText.isEmpty()
-                && !shelfTypeText.equals(RESTRICTED_EMPTY_SHELF_TYPE)) {
+                && !shelfTypeText.equals(Constants.HYPHEN)) {
             throw new IncorrectLocationException(
-                    "Shelf Type cannot be defined for Restricted Location at line "
-                            + lineNumber
-                            + ". Skipping this line."
+                    Messages.formatShelfTypeCannotBeRestrictedLocation(lineNumber)
             );
         }
 
@@ -263,38 +234,35 @@ public class WarehouseFileReader {
      * @throws IncorrectTypeException if the shelf type conflicts with an existing shelf
      */
     private void processShelfCell(WarehouseFloor floor, int row, int col,
-                                  ShelfType shelfType, String itemName,
+                                  String shelfTypeText, String itemName,
                                   int lineNumber)
             throws IncorrectLocationException, IncorrectTypeException {
 
-        if (isEmptyItemName(itemName)) {
-            return;
-        }
-
         if (floor.isRestrictedAt(row, col)) {
             throw new IncorrectLocationException(
-                    "Restricted location overlaps shelf at line "
-                            + lineNumber
-                            + ". Skipping this line."
+                    Messages.formatRestrictedLocationOverlapsShelf(lineNumber)
             );
         }
+
+        ShelfType shelfType = parseShelfType(shelfTypeText, lineNumber);
 
         if (floor.hasShelfAt(row, col)
                 && floor.getShelfTypeAt(row, col) != shelfType) {
             throw new IncorrectTypeException(
-                    "Shelf Type mismatched at line "
-                            + lineNumber
-                            + ". Skipping this line."
+                    Messages.formatShelfTypeMismatched(lineNumber)
             );
         }
 
         floor.attachShelfAt(row, col, shelfType);
-        floor.addItemToShelfAt(row, col, itemName);
+
+        if (!isEmptyItemName(itemName)) {
+            floor.addItemToShelfAt(row, col, itemName);
+        }
     }
 
     private boolean isEmptyItemName(String itemName) {
         return itemName == null
                 || itemName.trim().isEmpty()
-                || itemName.trim().equals(EMPTY_ITEM_NAME);
+                || itemName.trim().equals(Constants.HYPHEN);
     }
 }

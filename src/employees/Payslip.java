@@ -1,6 +1,7 @@
 package employees;
 
 import utils.Messages;
+import utils.Constants;
 
 public class Payslip{
     private final String employeeId;
@@ -22,6 +23,18 @@ public class Payslip{
         this.restrictedPenalty = restrictedPenalty;
         this.reporteePay = reporteePay;
         this.netSalary = netSalary;
+    }
+
+    public Payslip(Employee employee, double deliveredPay, double hitPenalty,
+                   double restrictedPenalty, double reporteePay, double netSalary) {
+        this(employee.getEmployeeId(),
+                employee.getEmployeeName(),
+                employee.getBaseSalary(),
+                deliveredPay,
+                hitPenalty,
+                restrictedPenalty,
+                reporteePay,
+                netSalary);
     }
 
     public String getEmployeeId() {
@@ -70,7 +83,7 @@ public class Payslip{
     }
 
     public String toFileLine(){
-        return String.format("%s,%s,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
+        return String.format(Constants.PAYSLIP_FILE_LINE_FORMAT,
                 employeeId,
                 employeeName,
                 baseSalary,

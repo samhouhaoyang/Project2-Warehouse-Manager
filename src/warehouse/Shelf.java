@@ -7,12 +7,10 @@
 package warehouse;
 
 import enums.ShelfType;
+import utils.Constants;
 import utils.Messages;
 
 public class Shelf {
-    private static final int INITIAL_CAPACITY = 4;
-    private static final int SIZE_MULTIPLIER = 2;
-
     private final ShelfType shelfType;
     private Item[] items;
     private int size;
@@ -24,8 +22,8 @@ public class Shelf {
      */
     public Shelf(ShelfType shelfType) {
         this.shelfType = shelfType;
-        this.items = new Item[INITIAL_CAPACITY];
-        this.size = 0;
+        this.items = new Item[Constants.INITIAL_SHELF_CAPACITY];
+        this.size = Constants.COUNTER_INITIAL_VALUE;
     }
 
     /**
@@ -70,7 +68,7 @@ public class Shelf {
      * @return true if there are no items, false otherwise
      */
     public boolean isEmpty() {
-        return size == 0;
+        return size == Constants.COUNTER_INITIAL_VALUE;
     }
 
     /**
@@ -85,7 +83,7 @@ public class Shelf {
         }
 
         if (size == items.length) {
-            items = resizeItemArray(items, items.length * SIZE_MULTIPLIER);
+            items = resizeItemArray(items, items.length * Constants.SIZE_MULTIPLIER);
         }
 
         items[size] = item;
@@ -145,7 +143,7 @@ public class Shelf {
         }
 
         for (int i = 0; i < size; i++) {
-            Messages.printShelfItem(i + 1, items[i]);
+            Messages.printShelfItem(i + Constants.COUNTER_INCREMENT, items[i]);
         }
     }
 

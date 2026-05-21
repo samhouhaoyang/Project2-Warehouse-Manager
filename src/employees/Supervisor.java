@@ -1,6 +1,7 @@
 package employees;
 
 import enums.DesignationType;
+import utils.Constants;
 import java.util.ArrayList;
 
 public class Supervisor extends Employee implements WarehouseWorker{
@@ -26,7 +27,7 @@ public class Supervisor extends Employee implements WarehouseWorker{
 
     @Override
     public double getReporteeManagementPay(){
-        return getReporteeCount() * PayslipConstants.REPORTEE_MANAGEMENT_PAY;
+        return getReporteeCount() * Constants.REPORTEE_MANAGEMENT_PAY;
     }
 
 

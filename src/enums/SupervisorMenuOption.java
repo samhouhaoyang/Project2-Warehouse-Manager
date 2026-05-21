@@ -1,5 +1,7 @@
 package enums;
 
+import utils.Constants;
+
 public enum SupervisorMenuOption {
     START_SHIFT,
     RESUME_SHIFT,
@@ -12,12 +14,12 @@ public enum SupervisorMenuOption {
 
     public static SupervisorMenuOption fromInput(String input) {
         return switch (input) {
-            case "1" ->START_SHIFT;
-            case "2" -> RESUME_SHIFT;
-            case "3" -> VIEW_SHIFT_SUMMARY;
-            case "4" -> VIEW_PAYSLIP;
-            case "5" -> VIEW_REPORTEE_SHIFT_SUMMARY;
-            case "6" -> LOGOUT;
+            case Constants.MENU_OPTION_1 -> START_SHIFT;
+            case Constants.MENU_OPTION_2 -> RESUME_SHIFT;
+            case Constants.MENU_OPTION_3 -> VIEW_SHIFT_SUMMARY;
+            case Constants.MENU_OPTION_4 -> VIEW_PAYSLIP;
+            case Constants.MENU_OPTION_5 -> VIEW_REPORTEE_SHIFT_SUMMARY;
+            case Constants.MENU_OPTION_6 -> LOGOUT;
             default -> INVALID;
         };
     }

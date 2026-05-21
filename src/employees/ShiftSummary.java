@@ -1,6 +1,7 @@
 package employees;
 
 import utils.Messages;
+import utils.Constants;
 
 public class ShiftSummary {
     private int itemsDelivered;
@@ -8,9 +9,9 @@ public class ShiftSummary {
     private int restrictedAreaHits;
 
     public ShiftSummary() {
-        this.itemsDelivered = 0;
-        this.wallHits = 0;
-        this.restrictedAreaHits = 0;
+        this.itemsDelivered = Constants.COUNTER_INITIAL_VALUE;
+        this.wallHits = Constants.COUNTER_INITIAL_VALUE;
+        this.restrictedAreaHits = Constants.COUNTER_INITIAL_VALUE;
 
     }
 
@@ -27,15 +28,15 @@ public class ShiftSummary {
     }
 
     public void updateItemDelivered(){
-        this.itemsDelivered += 1;
+        this.itemsDelivered += Constants.COUNTER_INCREMENT;
     }
 
     public void updateWallHits(){
-        this.wallHits += 1;
+        this.wallHits += Constants.COUNTER_INCREMENT;
     }
 
     public void updateRestrictedAreaHits(){
-        this.restrictedAreaHits += 1;
+        this.restrictedAreaHits += Constants.COUNTER_INCREMENT;
     }
 
     public void printSummary(){

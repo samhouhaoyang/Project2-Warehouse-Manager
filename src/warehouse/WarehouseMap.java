@@ -60,6 +60,12 @@ public class WarehouseMap {
         return warehouseFloors[floorNumber - 1];
     }
 
+    public void markStartCells() {
+        for (WarehouseFloor floor : warehouseFloors) {
+            floor.markStartCell();
+        }
+    }
+
     /**
      * Prints all warehouse floors.
      *

@@ -1,6 +1,7 @@
 package employees;
 
 import enums.DesignationType;
+import utils.Constants;
 
 public class PayrollManager extends Employee{
     public PayrollManager(String employeeId, String employeeName, DesignationType designation, double baseSalary) {
@@ -11,15 +12,12 @@ public class PayrollManager extends Employee{
 
     @Override
     public Payslip generatePayslip(){
-        // payroll manager only have base salary
         return new Payslip(
-                getEmployeeId(),
-                getEmployeeName(),
-                getBaseSalary(),
-                0.0,
-                0.0,
-                0.0,
-                0.0,
+                this,
+                Constants.ZERO_MONEY_AMOUNT,
+                Constants.ZERO_MONEY_AMOUNT,
+                Constants.ZERO_MONEY_AMOUNT,
+                Constants.ZERO_MONEY_AMOUNT,
                 getBaseSalary()
         );
     }

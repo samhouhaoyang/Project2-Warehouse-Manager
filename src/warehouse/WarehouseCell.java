@@ -2,6 +2,7 @@ package warehouse;
 
 import enums.CellType;
 import enums.ShelfType;
+import utils.Constants;
 
 /**
  * Represents a single cell on a warehouse floor.
@@ -180,17 +181,17 @@ public class WarehouseCell {
     public char getSymbol() {
         switch (type) {
             case WALL:
-                return '#';
+                return Constants.WALL_SYMBOL;
             case AISLE:
-                return '.';
+                return Constants.AISLE_SYMBOL;
             case RESTRICTED:
-                return 'X';
+                return Constants.RESTRICTED_SYMBOL;
             case SHELF:
-                return 'S';
+                return Constants.SHELF_SYMBOL;
             case START:
-                return 'O';
+                return Constants.START_SYMBOL;
             default:
-                return '?';
+                return Constants.UNKNOWN_SYMBOL;
         }
     }
 

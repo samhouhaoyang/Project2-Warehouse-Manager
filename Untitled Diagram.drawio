@@ -961,54 +961,45 @@
           <mxGeometry height="38" width="220" y="160" as="geometry" />
         </mxCell>
         <mxCell id="KVCKkUyumlxrHsyIgCeF-474" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="WarehouseFileReader" vertex="1">
-          <mxGeometry height="620" width="230" x="590" y="348" as="geometry">
+          <mxGeometry height="550" width="230" x="590" y="348" as="geometry">
             <mxRectangle height="30" width="80" x="210" y="576" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="KVCKkUyumlxrHsyIgCeF-475" parent="KVCKkUyumlxrHsyIgCeF-474" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- header: String" vertex="1">
-          <mxGeometry height="26" width="230" y="26" as="geometry" />
-        </mxCell>
-        <mxCell id="KVCKkUyumlxrHsyIgCeF-476" parent="KVCKkUyumlxrHsyIgCeF-474" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
-          <mxGeometry height="8" width="230" y="52" as="geometry" />
-        </mxCell>
         <mxCell id="KVCKkUyumlxrHsyIgCeF-477" parent="KVCKkUyumlxrHsyIgCeF-474" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;span style=&quot;text-align: center;&quot;&gt;+ WarehouseFileReader()&lt;/span&gt;" vertex="1">
-          <mxGeometry height="32" width="230" y="60" as="geometry" />
+          <mxGeometry height="32" width="230" y="26" as="geometry" />
         </mxCell>
         <mxCell id="KVCKkUyumlxrHsyIgCeF-478" parent="KVCKkUyumlxrHsyIgCeF-474" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ readWarehouseFile(path: String, warehosuemap: WarehouseMap): void" vertex="1">
-          <mxGeometry height="38" width="230" y="92" as="geometry" />
+          <mxGeometry height="38" width="230" y="58" as="geometry" />
         </mxCell>
         <mxCell id="KVCKkUyumlxrHsyIgCeF-480" parent="KVCKkUyumlxrHsyIgCeF-474" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- processLine(line: String, lineNumber: int, warehousemap: WarehouseMap): void" vertex="1">
-          <mxGeometry height="50" width="230" y="130" as="geometry" />
+          <mxGeometry height="50" width="230" y="96" as="geometry" />
         </mxCell>
         <mxCell id="KVCKkUyumlxrHsyIgCeF-483" parent="KVCKkUyumlxrHsyIgCeF-474" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- parseWarehouseInteger(value: String, lineNumber: int): int" vertex="1">
-          <mxGeometry height="50" width="230" y="180" as="geometry" />
+          <mxGeometry height="50" width="230" y="146" as="geometry" />
         </mxCell>
         <mxCell id="KVCKkUyumlxrHsyIgCeF-484" parent="KVCKkUyumlxrHsyIgCeF-474" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- validateFloorNumber(floorNumber: int, lineNumber: int, warehousemap: WarehouseMap): void" vertex="1">
-          <mxGeometry height="50" width="230" y="230" as="geometry" />
+          <mxGeometry height="50" width="230" y="196" as="geometry" />
         </mxCell>
         <mxCell id="KVCKkUyumlxrHsyIgCeF-482" parent="KVCKkUyumlxrHsyIgCeF-474" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- validateLocation(row: int, col: int, lineNumber: int, floor: WarehouseFloor): void&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="50" width="230" y="280" as="geometry" />
+          <mxGeometry height="50" width="230" y="246" as="geometry" />
         </mxCell>
         <mxCell id="KVCKkUyumlxrHsyIgCeF-487" parent="KVCKkUyumlxrHsyIgCeF-474" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- parseFileCellType(cellTypeText: String, lineNumber: int): CellType" vertex="1">
-          <mxGeometry height="50" width="230" y="330" as="geometry" />
+          <mxGeometry height="50" width="230" y="296" as="geometry" />
         </mxCell>
         <mxCell id="KVCKkUyumlxrHsyIgCeF-486" parent="KVCKkUyumlxrHsyIgCeF-474" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- parseShelveType(shelfTypeText: String, lineNumber: int): ShelfType" vertex="1">
-          <mxGeometry height="40" width="230" y="380" as="geometry" />
+          <mxGeometry height="40" width="230" y="346" as="geometry" />
         </mxCell>
         <mxCell id="KVCKkUyumlxrHsyIgCeF-485" parent="KVCKkUyumlxrHsyIgCeF-474" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- processRestrictedCell(floor: WarehouseFloor, row: int, col: int, shelfTypeText: String, lineNumber: int)" vertex="1">
-          <mxGeometry height="50" width="230" y="420" as="geometry" />
+          <mxGeometry height="50" width="230" y="386" as="geometry" />
         </mxCell>
-        <mxCell id="KVCKkUyumlxrHsyIgCeF-490" parent="KVCKkUyumlxrHsyIgCeF-474" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1">
-          <mxGeometry height="50" width="230" y="470" as="geometry" />
+        <mxCell id="KVCKkUyumlxrHsyIgCeF-490" parent="KVCKkUyumlxrHsyIgCeF-474" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- processShelfCell(floor: WarehouseFloor, row: int, col: int, shelfTypeText: String, itemName: String, lineNumber: int): void" vertex="1">
+          <mxGeometry height="64" width="230" y="436" as="geometry" />
         </mxCell>
-        <mxCell id="KVCKkUyumlxrHsyIgCeF-489" parent="KVCKkUyumlxrHsyIgCeF-474" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1">
-          <mxGeometry height="50" width="230" y="520" as="geometry" />
+        <mxCell id="KVCKkUyumlxrHsyIgCeF-489" parent="KVCKkUyumlxrHsyIgCeF-474" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- isEmptyItemName(itemName: String): boolean" vertex="1">
+          <mxGeometry height="50" width="230" y="500" as="geometry" />
         </mxCell>
-        <mxCell id="KVCKkUyumlxrHsyIgCeF-488" parent="KVCKkUyumlxrHsyIgCeF-474" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1">
-          <mxGeometry height="50" width="230" y="570" as="geometry" />
-        </mxCell>
-        <mxCell id="KVCKkUyumlxrHsyIgCeF-481" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;CsvFileReader&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ field1: Type&lt;br&gt;+ field2: Type&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ method1(Type): Type&lt;br&gt;+ method2(Type, Type): Type&lt;/p&gt;" vertex="1">
-          <mxGeometry height="140" width="190" x="890" y="214" as="geometry" />
+        <mxCell id="KVCKkUyumlxrHsyIgCeF-481" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;CsvFileReader&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;read(path: String): ArrayList&amp;lt;T&amp;gt;&lt;/p&gt;" vertex="1">
+          <mxGeometry height="76" width="190" x="890" y="214" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

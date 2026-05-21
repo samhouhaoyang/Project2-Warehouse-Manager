@@ -2,6 +2,9 @@ package enums;
 
 import utils.Constants;
 
+/**
+ * Represents movement-menu commands for forklift navigation.
+ */
 public enum Direction {
     UP,
     DOWN,
@@ -11,6 +14,12 @@ public enum Direction {
     QUIT,
     INVALID;
 
+    /**
+     * Converts user input into a movement command.
+     *
+     * @param input raw user input
+     * @return the matching direction, or INVALID if the input is not recognised
+     */
     public static Direction fromInput(String input) {
         if (input == null) {
             return INVALID;

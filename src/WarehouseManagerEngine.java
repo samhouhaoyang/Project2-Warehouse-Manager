@@ -1,25 +1,28 @@
-
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
-import employees.*;
-import enums.*;
+import employees.Employee;
+import employees.PayrollManager;
+import employees.Payslip;
+import employees.Supervisor;
+import enums.Direction;
+import enums.MovementResult;
+import enums.OperatorMenuOption;
+import enums.PayrollManagerMenuOption;
+import enums.ShelfMenuOption;
+import enums.SupervisorMenuOption;
 import exceptions.NotFoundException;
-
 import io.EmployeeFileReader;
 import io.PayslipFileReader;
 import io.PayslipFileWriter;
-
 import io.WarehouseFileReader;
 import utils.Constants;
 import utils.Messages;
 import warehouse.Item;
 import warehouse.WarehouseFloor;
 import warehouse.WarehouseMap;
-
-
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
 
 import static enums.PayrollManagerMenuOption.fromInput;
 
@@ -32,7 +35,6 @@ public class WarehouseManagerEngine {
     private ArrayList<Payslip> loadedPayslips;
     private final ArrayList<Payslip> currentPayslips;
     private boolean hasGeneratedCurrentPayslips;
-    private boolean payslipsModified;
     private boolean payslipFileExists;
     private String payslipHeader;
 
@@ -55,7 +57,6 @@ public class WarehouseManagerEngine {
         loadedPayslips = new ArrayList<>();
         currentPayslips = new ArrayList<>();
         hasGeneratedCurrentPayslips = false;
-        payslipsModified = false;
         payslipFileExists = false;
         payslipHeader = Constants.PAYSLIPS_HEADER;
     }
@@ -80,16 +81,11 @@ public class WarehouseManagerEngine {
         engine.exitProgram();
     }
 
-    private PayrollManager findFirstPayrollManager() {
-        for (Employee employee : employees) {
-            if (employee instanceof PayrollManager) {
-                return (PayrollManager) employee;
-            }
-        }
-
-        return null;
-    }
-
+    /**
+     * Reads employee data from the configured employee file.
+     *
+     * @param path employee file path
+     */
     private void readEmployees(String path) {
         EmployeeFileReader reader = new EmployeeFileReader();
 
@@ -100,6 +96,9 @@ public class WarehouseManagerEngine {
         }
     }
 
+    /**
+     * Reads existing payslip data from the fixed payslip file path.
+     */
     private void readPayslips() {
         PayslipFileReader reader = new PayslipFileReader();
         payslipFileExists = new File(Constants.PAYSLIPS_FILE_PATH).exists();
@@ -107,6 +106,9 @@ public class WarehouseManagerEngine {
         payslipHeader = reader.getHeader();
     }
 
+    /**
+     * Saves either generated payslips or valid loaded payslips on program exit.
+     */
     private void savePayslipsIfNeeded() {
         ArrayList<Payslip> payslipsToSave;
 
@@ -133,14 +135,20 @@ public class WarehouseManagerEngine {
         }
     }
 
-
-
-    private void exitProgram(){
+    /**
+     * Performs final persistence and prints the program farewell.
+     */
+    private void exitProgram() {
         savePayslipsIfNeeded();
         System.out.println(Messages.GOODBYE);
-
     }
 
+    /**
+     * Validates command-line arguments and stores valid startup settings.
+     *
+     * @param args command-line arguments
+     * @return true if arguments are valid and files exist, false otherwise
+     */
     private boolean validateArgs(String[] args) {
         if (args.length < Constants.VALID_ARGS_NUM) {
             System.out.println(Messages.INVALID_ARGS_USAGE);
@@ -157,13 +165,14 @@ public class WarehouseManagerEngine {
         }
 
 
-        if (floors < Constants.MIN_VALID_FLOOR_NUMBER || floors > Constants.MAX_VALID_FLOOR_NUMBER) {
+        if (floors < Constants.MIN_VALID_FLOOR_NUMBER
+                || floors > Constants.MAX_VALID_FLOOR_NUMBER) {
             System.out.println(Messages.INVALID_FLOORS);
             return false;
         }
 
         if (rows < Constants.MIN_VALID_ROWS_OR_COLS
-                || columns < Constants.MIN_VALID_ROWS_OR_COLS){
+                || columns < Constants.MIN_VALID_ROWS_OR_COLS) {
             System.out.println(Messages.INVALID_ROWs_COLS);
             return false;
         }
@@ -171,7 +180,8 @@ public class WarehouseManagerEngine {
         warehouseMapFilePath = args[3];
         employeesFilePath = args[4];
 
-        if(!new File(warehouseMapFilePath).exists() || !new File(employeesFilePath).exists()) {
+        if (!new File(warehouseMapFilePath).exists()
+                || !new File(employeesFilePath).exists()) {
             System.out.println(Messages.FILE_PROCESSING_ERROR);
             return false;
         }
@@ -194,6 +204,11 @@ public class WarehouseManagerEngine {
         readPayslips();
     }
 
+    /**
+     * Reads warehouse map data into the already-created warehouse map.
+     *
+     * @param warehouseMap warehouse map to populate
+     */
     private void readWarehouseMap(WarehouseMap warehouseMap) {
         WarehouseFileReader reader = new WarehouseFileReader();
 
@@ -207,7 +222,7 @@ public class WarehouseManagerEngine {
     /**
      * Runs the employee login loop until the user terminates the program.
      */
-    private void runMainMenuLoop()  {
+    private void runMainMenuLoop() {
         Messages.printWelcomeA2();
 
         boolean isRunning = true;
@@ -217,28 +232,24 @@ public class WarehouseManagerEngine {
 
             String input = SCANNER.nextLine().trim();
 
-
-            if(input.equalsIgnoreCase(Constants.TERMINATE)){
+            if (input.equalsIgnoreCase(Constants.TERMINATE)) {
                 isRunning = false;
-            }else{
+            } else {
                 Employee currEmployee = findEmployeeById(input);
 
-                if(currEmployee == null){
+                if (currEmployee == null) {
                     Messages.printEmployeeNotFound();
-
-
-                }else{
+                } else {
                     System.out.println();
                     Messages.printEmployeeWelcome(currEmployee);
 
-                    switch (currEmployee.getDesignation()){
+                    switch (currEmployee.getDesignation()) {
                         case OPERATOR, SENIOR_OPERATOR -> runOperatorMenu(currEmployee);
                         case PAYROLL_MANAGER -> runPayrollManagerMenu((PayrollManager) currEmployee);
-                        case SUPERVISOR -> runSupervisorMenu((Supervisor)currEmployee);
+                        case SUPERVISOR -> runSupervisorMenu((Supervisor) currEmployee);
                         default -> System.out.println(Messages.INVALID_INPUT);
                     }
                 }
-
             }
 
             if (isRunning) {
@@ -248,25 +259,28 @@ public class WarehouseManagerEngine {
         }
     }
 
-
-    private void runSupervisorMenu(Supervisor supervisor){
+    /**
+     * Runs the supervisor menu until the supervisor logs out.
+     *
+     * @param supervisor logged-in supervisor
+     */
+    private void runSupervisorMenu(Supervisor supervisor) {
         boolean isRunning = true;
-        while(isRunning) {
+
+        while (isRunning) {
             Messages.printSupervisorMenu(supervisor);
 
             String input = SCANNER.nextLine().trim();
             SupervisorMenuOption option = SupervisorMenuOption.fromInput(input);
 
-            switch(option) {
+            switch (option) {
                 case START_SHIFT -> startWarehouseShift(supervisor);
                 case RESUME_SHIFT -> resumeWarehouseShift(supervisor);
-
                 case VIEW_SHIFT_SUMMARY -> supervisor.getShiftSummary().printSummary();
                 case VIEW_PAYSLIP -> viewOwnPayslip(supervisor);
                 case VIEW_REPORTEE_SHIFT_SUMMARY -> viewReporteesShift(supervisor);
                 case LOGOUT -> isRunning = false;
                 case INVALID -> System.out.println(Messages.INVALID_INPUT);
-
             }
 
             if (isRunning) {
@@ -275,44 +289,44 @@ public class WarehouseManagerEngine {
         }
     }
 
+    /**
+     * Runs the operator menu until the operator logs out.
+     *
+     * @param employee logged-in operator or senior operator
+     */
     private void runOperatorMenu(Employee employee) {
         boolean isRunning = true;
 
-        while(isRunning) {
+        while (isRunning) {
             Messages.printOperatorMenu(employee);
 
             String input = SCANNER.nextLine().trim();
             OperatorMenuOption option = OperatorMenuOption.fromInput(input);
 
-            switch(option) {
+            switch (option) {
                 case START_SHIFT -> startWarehouseShift(employee);
                 case RESUME_SHIFT -> resumeWarehouseShift(employee);
-
                 case VIEW_SHIFT_SUMMARY -> employee.getShiftSummary().printSummary();
                 case VIEW_PAYSLIP -> viewOwnPayslip(employee);
                 case LOGOUT -> isRunning = false;
                 case INVALID -> System.out.println(Messages.INVALID_INPUT);
-
             }
 
             if (isRunning) {
                 System.out.println();
             }
         }
-
     }
-    // payroll manager menu
-    private void runPayrollManagerMenu(PayrollManager manager)  {
-        boolean isRunning= true;
 
-        /*
-        menu options
-        1. view all employees' shift summaries
-        2. generate payslips
-        3. view payslips
-        4. logout: return to employee login
-         */
-        while(isRunning) {
+    /**
+     * Runs the payroll manager menu until the manager logs out.
+     *
+     * @param manager logged-in payroll manager
+     */
+    private void runPayrollManagerMenu(PayrollManager manager) {
+        boolean isRunning = true;
+
+        while (isRunning) {
             Messages.printPayrollManagerMenu(manager);
             String optionText = SCANNER.nextLine().trim();
             PayrollManagerMenuOption option = fromInput(optionText);
@@ -379,6 +393,11 @@ public class WarehouseManagerEngine {
         runWarehouseShift(employee);
     }
 
+    /**
+     * Stops a start/resume attempt when no shelf items or carried items remain.
+     *
+     * @return true if there is no deliverable warehouse work
+     */
     private boolean stopIfNoDeliverableWork() {
         if (warehouseMap.areAllShelfItemsEmpty()
                 && !warehouseMap.isAnyForkliftCarrying()) {
@@ -505,6 +524,12 @@ public class WarehouseManagerEngine {
         }
     }
 
+    /**
+     * Handles shelf entry after a successful movement.
+     *
+     * @param employee employee operating the forklift
+     * @param floor current floor
+     */
     private void handlePostMoveCell(Employee employee, WarehouseFloor floor) {
         int forkliftRow = floor.getForkliftRow();
         int forkliftCol = floor.getForkliftCol();
@@ -516,12 +541,20 @@ public class WarehouseManagerEngine {
         }
     }
 
+    /**
+     * Resets every floor's forklift before starting a fresh shift.
+     */
     private void resetAllForklifts() {
         for (int floorNumber = 1; floorNumber <= warehouseMap.getFloorCount(); floorNumber++) {
             warehouseMap.getFloorByNumber(floorNumber).resetForklift();
         }
     }
 
+    /**
+     * Displays the current employee's payslip or the appropriate not-found message.
+     *
+     * @param employee employee requesting their payslip
+     */
     private void viewOwnPayslip(Employee employee) {
         try {
             Payslip payslip = getPayslipForEmployee(employee);
@@ -532,6 +565,13 @@ public class WarehouseManagerEngine {
         }
     }
 
+    /**
+     * Finds the payslip that should be visible to the given employee.
+     *
+     * @param employee employee requesting a payslip
+     * @return matching payslip
+     * @throws NotFoundException if no suitable payslip exists
+     */
     private Payslip getPayslipForEmployee(Employee employee) throws NotFoundException {
         ArrayList<Payslip> payslipSource;
 
@@ -561,6 +601,13 @@ public class WarehouseManagerEngine {
         return payslip;
     }
 
+    /**
+     * Finds a payslip by employee id.
+     *
+     * @param payslips payslip list to search
+     * @param employeeId employee id to match
+     * @return matching payslip, or null if none exists
+     */
     private Payslip findPayslipByEmployeeId(ArrayList<Payslip> payslips, String employeeId) {
         for (Payslip payslip : payslips) {
             if (payslip.getEmployeeId().equals(employeeId)) {
@@ -571,6 +618,11 @@ public class WarehouseManagerEngine {
         return null;
     }
 
+    /**
+     * Displays shift summaries for the supervisor's direct reportees.
+     *
+     * @param supervisor supervisor requesting reportee summaries
+     */
     private void viewReporteesShift(Supervisor supervisor) {
         ArrayList<Employee> reportees;
         reportees = supervisor.getReportees();
@@ -596,9 +648,11 @@ public class WarehouseManagerEngine {
                 System.out.println();
             }
         }
-
     }
 
+    /**
+     * Displays shift summaries for all loaded employees.
+     */
     private void viewAllEmployeeShiftSummary() {
         for (int i = 0; i < employees.size(); i++) {
             Employee employee = employees.get(i);
@@ -614,9 +668,11 @@ public class WarehouseManagerEngine {
                 System.out.println();
             }
         }
-
     }
 
+    /**
+     * Generates current-session payslips for all loaded employees.
+     */
     private void generateCurrentPayslips() {
         currentPayslips.clear();
 
@@ -625,19 +681,20 @@ public class WarehouseManagerEngine {
         }
 
         hasGeneratedCurrentPayslips = true;
-        payslipsModified = true;
-
         Messages.printPaySlipGenerated();
     }
 
-    private void viewAllPayslips(){
+    /**
+     * Displays all generated payslips, or loaded payslips if none were generated.
+     */
+    private void viewAllPayslips() {
         ArrayList<Payslip> payslipsToPrint;
 
         if (hasGeneratedCurrentPayslips) {
             payslipsToPrint = filterPayslipsForCurrentEmployees(currentPayslips);
-        }else if (!loadedPayslips.isEmpty()) {
+        } else if (!loadedPayslips.isEmpty()) {
             payslipsToPrint = filterPayslipsForCurrentEmployees(loadedPayslips);
-        }else{
+        } else {
             Messages.printPaySlipNotGenerated();
             return;
         }
@@ -651,6 +708,12 @@ public class WarehouseManagerEngine {
         printPayslips(payslipsToPrint);
     }
 
+    /**
+     * Keeps only payslips for employees present in the currently loaded employee file.
+     *
+     * @param payslips payslips to filter
+     * @return filtered payslips in employee file order
+     */
     private ArrayList<Payslip> filterPayslipsForCurrentEmployees(ArrayList<Payslip> payslips) {
         ArrayList<Payslip> filteredPayslips = new ArrayList<>();
 
@@ -665,6 +728,11 @@ public class WarehouseManagerEngine {
         return filteredPayslips;
     }
 
+    /**
+     * Prints payslips with assignment-required separators.
+     *
+     * @param payslips payslips to print
+     */
     private void printPayslips(ArrayList<Payslip> payslips) {
         for (int i = 0; i < payslips.size(); i++) {
             payslips.get(i).printPayslip();
@@ -676,6 +744,12 @@ public class WarehouseManagerEngine {
         }
     }
 
+    /**
+     * Finds an employee by id.
+     *
+     * @param employeeId employee id to match
+     * @return matching employee, or null if none exists
+     */
     private Employee findEmployeeById(String employeeId) {
         for (Employee employee : employees) {
             if (employee.getEmployeeId().equals(employeeId)) {
@@ -686,6 +760,12 @@ public class WarehouseManagerEngine {
         return null;
     }
 
+    /**
+     * Runs the shelf menu for the shelf under the current forklift.
+     *
+     * @param employee employee operating the forklift
+     * @param floor current warehouse floor
+     */
     private void runShelfMenu(Employee employee, WarehouseFloor floor) {
         boolean inShelfMenu = true;
 
@@ -714,10 +794,20 @@ public class WarehouseManagerEngine {
         }
     }
 
+    /**
+     * Prints items on the shelf under the current forklift.
+     *
+     * @param floor current warehouse floor
+     */
     private void viewCurrentShelfItems(WarehouseFloor floor) {
         floor.printShelfItemsAt(floor.getForkliftRow(), floor.getForkliftCol());
     }
 
+    /**
+     * Attempts to pick an item from the shelf under the current forklift.
+     *
+     * @param floor current warehouse floor
+     */
     private void pickItemFromCurrentShelf(WarehouseFloor floor) {
         if (floor.isForkliftCarrying()) {
             System.out.println(Messages.ALREADY_CARRYING);
@@ -797,6 +887,12 @@ public class WarehouseManagerEngine {
                 && !warehouseMap.isAnyForkliftCarrying();
     }
 
+    /**
+     * Checks whether the selected floor has all shelves visited and empty.
+     *
+     * @param floor floor to check
+     * @return true if the floor is complete and its forklift is not carrying
+     */
     private boolean isFloorComplete(WarehouseFloor floor) {
         return floor.areAllShelvesCompleted()
                 && !floor.isForkliftCarrying();

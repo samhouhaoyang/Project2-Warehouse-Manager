@@ -13,7 +13,6 @@ import io.PayslipFileWriter;
 import io.WarehouseFileReader;
 import utils.Constants;
 import utils.Messages;
-import warehouse.Forklift;
 import warehouse.Item;
 import warehouse.WarehouseFloor;
 import warehouse.WarehouseMap;
@@ -422,7 +421,7 @@ public class WarehouseManagerEngine {
 
                 case QUIT -> {
                     System.out.println(Messages.SESSION_PAUSED);
-                    currentFloor.getForklift().setSessionPaused(true);
+                    currentFloor.pauseForkliftSession();
                     isInFloor = false;
                 }
 
@@ -470,10 +469,11 @@ public class WarehouseManagerEngine {
         }
     }
     private void handlePostMoveCell(Employee employee, WarehouseFloor floor) {
-        Forklift forklift = floor.getForklift();
+        int forkliftRow = floor.getForkliftRow();
+        int forkliftCol = floor.getForkliftCol();
 
-        if (floor.isShelfAt(forklift.getRow(), forklift.getCol())) {
-            floor.markShelfVisitedAt(forklift.getRow(), forklift.getCol());
+        if (floor.isShelfAt(forkliftRow, forkliftCol)) {
+            floor.markShelfVisitedAt(forkliftRow, forkliftCol);
             floor.printFloorWithoutHeader();
             runShelfMenu(employee, floor);
         }
@@ -677,14 +677,11 @@ public class WarehouseManagerEngine {
     }
 
     private void viewCurrentShelfItems(WarehouseFloor floor) {
-        Forklift forklift = floor.getForklift();
-        floor.printShelfItemsAt(forklift.getRow(), forklift.getCol());
+        floor.printShelfItemsAt(floor.getForkliftRow(), floor.getForkliftCol());
     }
 
     private void pickItemFromCurrentShelf(WarehouseFloor floor) {
-        Forklift forklift = floor.getForklift();
-
-        if (forklift.isCarrying()) {
+        if (floor.isForkliftCarrying()) {
             System.out.println(Messages.ALREADY_CARRYING);
             return;
         }
@@ -706,8 +703,8 @@ public class WarehouseManagerEngine {
         }
 
         Item pickedItem = floor.removeItemFromShelfAt(
-                forklift.getRow(),
-                forklift.getCol(),
+                floor.getForkliftRow(),
+                floor.getForkliftCol(),
                 itemIndex
         );
 
@@ -716,7 +713,7 @@ public class WarehouseManagerEngine {
             return;
         }
 
-        forklift.pickUp(pickedItem);
+        floor.pickUpWithForklift(pickedItem);
         System.out.println(Messages.ITEM_PICKED);
     }
 
@@ -728,19 +725,17 @@ public class WarehouseManagerEngine {
      * @param floor the current warehouse floor
      */
     private void deliverItemAtStart(Employee employee, WarehouseFloor floor) {
-        Forklift forklift = floor.getForklift();
-
-        if (!forklift.isCarrying()) {
+        if (!floor.isForkliftCarrying()) {
             System.out.println(Messages.NOT_CARRYING);
             return;
         }
 
-        if (!forklift.isAtStart()) {
+        if (!floor.isForkliftAtStart()) {
             System.out.println(Messages.MUST_STAND_ON_START);
             return;
         }
 
-        Item deliveredItem = forklift.drop();
+        Item deliveredItem = floor.dropFromForklift();
 
         if (deliveredItem == null) {
             System.out.println(Messages.NOT_CARRYING);
@@ -766,7 +761,7 @@ public class WarehouseManagerEngine {
 
     private boolean isFloorComplete(WarehouseFloor floor) {
         return floor.areAllShelvesCompleted()
-                && !floor.getForklift().isCarrying();
+                && !floor.isForkliftCarrying();
     }
 }
 

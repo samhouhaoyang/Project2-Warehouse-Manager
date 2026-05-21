@@ -1,15 +1,15 @@
-/**
- * Represents a shelf that stores items in the warehouse.
- *
- * Internally, the shelf uses a resizable one-dimensional array
- * to manage items, similar to how an ArrayList works.
- */
 package warehouse;
 
 import enums.ShelfType;
 import utils.Constants;
 import utils.Messages;
 
+/**
+ * Represents a shelf that stores items in the warehouse.
+ *
+ * Internally, the shelf uses a resizable one-dimensional array
+ * to manage items, similar to how an ArrayList works.
+ */
 public class Shelf {
     private final ShelfType shelfType;
     private Item[] items;

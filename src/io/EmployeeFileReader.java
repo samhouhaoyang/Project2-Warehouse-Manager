@@ -21,27 +21,24 @@ public class EmployeeFileReader {
 
         ArrayList<Employee> employees = new ArrayList<>();
 
-        Scanner scanner = new Scanner(new File(path));
         int lineNumber = 0;
-        while(scanner.hasNextLine()){
-            String line = scanner.nextLine();
-            lineNumber++;
+        try (Scanner scanner = new Scanner(new File(path))) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                lineNumber++;
 
-            // skip the heading
-            if (lineNumber == 1 || line.trim().isEmpty()) {
-                continue;
+                if (lineNumber == 1 || line.trim().isEmpty()) {
+                    continue;
+                }
+
+                Employee employee = processLine(line, lineNumber);
+
+                if (employee != null) {
+                    employees.add(employee);
+                }
             }
-
-            Employee employee = processLine(line,lineNumber);
-
-            if(employee != null){
-                employees.add(employee);
-            }
-
-
         }
 
-        scanner.close();
         linkSupervisor(employees);
 
         return employees;
@@ -55,7 +52,7 @@ public class EmployeeFileReader {
         return null;
     }
 
-    public void linkSupervisor(ArrayList<Employee> employees){
+    private void linkSupervisor(ArrayList<Employee> employees){
         for (int i = 0; i < employees.size(); i++) {
             Employee employee = employees.get(i);
             String managerId = managerIds.get(i);
@@ -71,9 +68,10 @@ public class EmployeeFileReader {
             }
         }
     }
-    public Employee processLine(String line, int lineNumber){
+
+    private Employee processLine(String line, int lineNumber){
         String[] lineArray = line.split(Constants.CSV_DELIMITER, -1);
-        // incorrect number of columns
+
         if (lineArray.length < Constants.EMPLOYEE_MIN_FIELD_COUNT) {
             Messages.printEmployeeFileInvalidLine(lineNumber);
             return null;
@@ -85,8 +83,7 @@ public class EmployeeFileReader {
         String baseSalaryText = lineArray[3].trim();
         String managerId = Constants.EMPTY_STRING;
 
-        // handles manager if linked to one
-        if(lineArray.length >= Constants.EMPLOYEE_MAX_FIELD_COUNT){
+        if (lineArray.length >= Constants.EMPLOYEE_MAX_FIELD_COUNT) {
             managerId = lineArray[4].trim();
         }
 
@@ -132,10 +129,10 @@ public class EmployeeFileReader {
                                     DesignationType designation, double baseSalary){
         switch (designation){
             case OPERATOR -> {
-                return new Operator(employeeId,employeeName, designation, baseSalary);
+                return new Operator(employeeId, employeeName, designation, baseSalary);
             }
             case SENIOR_OPERATOR -> {
-                return new SeniorOperator(employeeId,employeeName, designation, baseSalary);
+                return new SeniorOperator(employeeId, employeeName, designation, baseSalary);
             }
             case SUPERVISOR -> {
                 return new Supervisor(employeeId, employeeName, designation, baseSalary);

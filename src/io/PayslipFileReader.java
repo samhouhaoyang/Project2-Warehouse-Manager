@@ -25,8 +25,7 @@ public class PayslipFileReader {
             return payslips;
         }
 
-        try{
-            Scanner scanner = new Scanner(file);
+        try (Scanner scanner = new Scanner(file)) {
             int lineNumber = 0;
 
             while (scanner.hasNextLine()) {
@@ -43,18 +42,15 @@ public class PayslipFileReader {
                     continue;
                 }
 
-                try{
-                    Payslip payslip = processLine(line,lineNumber);
+                try {
+                    Payslip payslip = processLine(line, lineNumber);
                     payslips.add(payslip);
 
-                }catch(IncorrectTypeException | InvalidLineException e){
+                } catch (IncorrectTypeException | InvalidLineException e) {
                     System.out.println(e.getMessage());
                 }
             }
-
-            scanner.close();
-
-        }catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             Messages.printFileProcessingError();
         }
 
@@ -63,15 +59,6 @@ public class PayslipFileReader {
 
     public String getHeader() {
         return header;
-    }
-
-    private Payslip findPayslipByEmployeeId(ArrayList<Payslip> Payslips, String id){
-        for (Payslip payslip : Payslips) {
-            if(payslip.getEmployeeId().equals(id)){
-                return payslip;
-            }
-        }
-        return null;
     }
 
     public Payslip processLine(String line, int lineNumber)

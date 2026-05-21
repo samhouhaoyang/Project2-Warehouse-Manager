@@ -89,7 +89,7 @@ public class WarehouseMap {
         for (int floorNumber = 1; floorNumber <= getFloorCount(); floorNumber++) {
             WarehouseFloor floor = getFloorByNumber(floorNumber);
 
-            if (floor.getForklift().isCarrying()) {
+            if (floor.isForkliftCarrying()) {
                 return true;
             }
         }

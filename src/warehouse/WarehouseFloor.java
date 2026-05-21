@@ -8,8 +8,8 @@ import utils.Constants;
 import utils.Messages;
 
 /**
- * Represents the forklift on a warehouse floor.
- * It stores the forklift position, carried item, and session pause state.
+ * Represents one floor in the warehouse.
+ * Each floor owns its grid cells, shelf visit state, and forklift.
  */
 public class WarehouseFloor {
 
@@ -72,15 +72,32 @@ public class WarehouseFloor {
         return cols;
     }
 
-    /**
-     * Returns this floor's forklift.
-     * Later, if we want stronger encapsulation, we can replace this with
-     * controlled forklift methods.
-     *
-     * @return the forklift on this floor
-     */
-    public Forklift getForklift() {
-        return forklift;
+    public int getForkliftRow() {
+        return forklift.getRow();
+    }
+
+    public int getForkliftCol() {
+        return forklift.getCol();
+    }
+
+    public boolean isForkliftCarrying() {
+        return forklift.isCarrying();
+    }
+
+    public boolean isForkliftAtStart() {
+        return forklift.isAtStart();
+    }
+
+    public void pauseForkliftSession() {
+        forklift.setSessionPaused(true);
+    }
+
+    public void pickUpWithForklift(Item item) {
+        forklift.pickUp(item);
+    }
+
+    public Item dropFromForklift() {
+        return forklift.drop();
     }
 
     public boolean isInBounds(int row, int col) {

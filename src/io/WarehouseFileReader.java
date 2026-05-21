@@ -30,32 +30,31 @@ public class WarehouseFileReader {
     public void readWarehouseFile(String path, WarehouseMap warehouseMap)
             throws FileNotFoundException {
 
-        Scanner scanner = new Scanner(new File(path));
         int lineNumber = 0;
 
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            lineNumber++;
+        try (Scanner scanner = new Scanner(new File(path))) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                lineNumber++;
 
-            if (line.trim().isEmpty()) {
-                continue;
-            }
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
 
-            if (lineNumber == 1) {
-                continue;
-            }
+                if (lineNumber == 1) {
+                    continue;
+                }
 
-            try {
-                processLine(line, lineNumber, warehouseMap);
-            } catch (InvalidWarehouseException
-                     | InvalidLocationException
-                     | IncorrectTypeException
-                     | IncorrectLocationException e) {
-                System.out.println(e.getMessage());
+                try {
+                    processLine(line, lineNumber, warehouseMap);
+                } catch (InvalidWarehouseException
+                         | InvalidLocationException
+                         | IncorrectTypeException
+                         | IncorrectLocationException e) {
+                    System.out.println(e.getMessage());
+                }
             }
         }
-
-        scanner.close();
     }
 
     /**

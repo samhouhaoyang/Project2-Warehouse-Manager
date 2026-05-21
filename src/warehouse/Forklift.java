@@ -1,36 +1,22 @@
-/**
- * Forklift represents the player-controlled vehicle in the warehouse.
- * It manages position, movement, collision statistics, carried items,
- * and session state.
- */
 package warehouse;
 
-import utils.*;
+import utils.Constants;
 
-
-
+/**
+ * Represents the forklift used on a warehouse floor.
+ * It tracks its position, carried item, and pause state.
+ */
 public class Forklift {
-
-    // Current row position of the forklift on the grid
     private int row;
-
-    // Current column position of the forklift on the grid
     private int col;
-
-    // Indicates whether the current warehouse shift is paused
     private boolean sessionPaused;
-
-    // Item currently carried by the forklift (null if empty)
     private Item carriedItem;
-
-
 
     /**
      * Constructs a Forklift object.
      * Resets the forklift to its starting state.
      */
     public Forklift() {
-
         resetSessionState();
     }
 
@@ -46,12 +32,17 @@ public class Forklift {
         this.carriedItem = null;
     }
 
-    /* ===== Simple getters / setters  */
+    public int getRow() {
+        return this.row;
+    }
 
-    public int getRow() { return this.row; }
-    public int getCol() { return this.col; }
+    public int getCol() {
+        return this.col;
+    }
 
-    public boolean isCarrying() { return this.carriedItem != null; }
+    public boolean isCarrying() {
+        return this.carriedItem != null;
+    }
 
     /**
      * Assigns an item to be carried by the forklift.
@@ -78,6 +69,7 @@ public class Forklift {
         this.carriedItem = null;
         return item;
     }
+
     public boolean isAtStart() {
         return row == Constants.START_ROW && col == Constants.START_COL;
     }

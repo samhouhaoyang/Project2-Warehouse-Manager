@@ -1,3 +1,11 @@
+/**
+ * Student Name - Haoyang Hou
+ * Student Id - 1462169
+ * Student email - houhh@student.unimelb.edu.au
+ * AI Usage Declaration - I used AI assistance to understand and improve encapsulation and interface design, to debug test/output mismatches, and to improve code comments and Javadoc. All final design decisions, code changes, and submission responsibility are mine.
+ * Assignment 1 solution reference - Parts of the warehouse movement, shelf interaction, and map-display structure were informed by the Assignment 1 specification/scaffold concepts, then adapted for the Assignment 2 multi-floor, employee, and payroll requirements.
+ */
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -14,6 +22,7 @@ import enums.PayrollManagerMenuOption;
 import enums.ShelfMenuOption;
 import enums.SupervisorMenuOption;
 import exceptions.NotFoundException;
+import io.CsvFileReader;
 import io.EmployeeFileReader;
 import io.PayslipFileReader;
 import io.PayslipFileWriter;
@@ -87,10 +96,10 @@ public class WarehouseManagerEngine {
      * @param path employee file path
      */
     private void readEmployees(String path) {
-        EmployeeFileReader reader = new EmployeeFileReader();
+        CsvFileReader<Employee> reader = new EmployeeFileReader();
 
         try {
-            employees = reader.readEmployees(path);
+            employees = reader.read(path);
         } catch (FileNotFoundException e) {
             Messages.printFileProcessingError();
         }
@@ -102,7 +111,7 @@ public class WarehouseManagerEngine {
     private void readPayslips() {
         PayslipFileReader reader = new PayslipFileReader();
         payslipFileExists = new File(Constants.PAYSLIPS_FILE_PATH).exists();
-        loadedPayslips = reader.readPayslips(Constants.PAYSLIPS_FILE_PATH);
+        loadedPayslips = reader.read(Constants.PAYSLIPS_FILE_PATH);
         payslipHeader = reader.getHeader();
     }
 

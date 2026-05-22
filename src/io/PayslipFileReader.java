@@ -1,3 +1,11 @@
+/**
+ * Student Name - Haoyang Hou
+ * Student Id - 1462169
+ * Student email - houhh@student.unimelb.edu.au
+ * AI Usage Declaration - I used AI assistance to understand and improve encapsulation and interface design, to debug test/output mismatches, and to improve code comments and Javadoc. All final design decisions, code changes, and submission responsibility are mine.
+ * Assignment 1 solution reference - Parts of the warehouse movement, shelf interaction, and map-display structure were informed by the Assignment 1 specification/scaffold concepts, then adapted for the Assignment 2 multi-floor, employee, and payroll requirements.
+ */
+
 package io;
 
 import employees.Payslip;
@@ -70,17 +78,6 @@ public class PayslipFileReader implements CsvFileReader<Payslip> {
         }
 
         return payslips;
-    }
-
-    /**
-     * Reads payslip records from a file if it exists.
-     * Kept as a descriptive wrapper for engine code readability.
-     *
-     * @param path payslip file path
-     * @return valid payslip records
-     */
-    public ArrayList<Payslip> readPayslips(String path) {
-        return read(path);
     }
 
     /**
